@@ -1,8 +1,10 @@
 # ask if user wants to play pvp or test
-test: "no"
+question_test: "no"
+# if question_test == 'no', what version is default
+pvp: "yes"
 # ask if user wants to input a board
 Board_creator: "no"
 # ask if user wants to play rus version
 Rus_question: "yes"
-# if Rus_question == 'no' what version is default
+# if Rus_question == 'no', what version is default
 Rus: "yes"

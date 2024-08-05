@@ -423,12 +423,15 @@ def main():
     else:
         if config.Rus == 'yes':
             ru = True
-        else:
+        elif config.Rus == 'no':
             ru = False
-    if config.test == 'yes':
+    if config.question_test == 'yes':
         pvp = binary_choice('Do you want to play the game yourself?')
     else:
-        pvp = True
+        if config.pvp =='yes':
+            pvp = True
+        elif config.pvp == 'no':
+            pvp = False
     print_board(board, pvp)
     turn_num = 0
     while read_board(board, White_turn):
