@@ -2,6 +2,8 @@
 Program for testing the russian checkers
 '''
 from random import randint
+from config_reader import get_settings
+
 def print_board(board, PvP):  # prints the playing board with coordinats on top and left
     if PvP:
         print('\n  a b c d e f g h')
@@ -14,6 +16,27 @@ def print_board(board, PvP):  # prints the playing board with coordinats on top 
             print('01234567'[i] + ''.join(board[i]))
         print('White', colour_list(board, True))
         print('Black', colour_list(board, False))
+        
+def board_creator():
+    board_list = []
+    temp_list = []
+    pvp = binary_choice('Were you playing PvP?')
+    board = input('Paste your board:\n')
+    if pvp:
+        board = board[20:178]
+        board = board.split(' ')
+        for i in range(0,64,8):
+            temp_list = board[i + int(i / 8):i + int(i / 8) + 8]
+            board_list.append(temp_list)
+    else:
+        board = board[11:]
+        for i in range(0,64,8):
+            temp = board[i + int(i / 4):i + int(i / 4) + 8]
+            temp_list.extend(temp)
+            board_list.append(temp_list)
+            temp_list = []
+    print_board(board_list, pvp)
+    return(board_list)
 
 def ChangeOfTwo(y, x, j):
     if j == 0:
@@ -26,11 +49,11 @@ def ChangeOfTwo(y, x, j):
         output = [y + 2, x - 2]
     return(output)
 
-def valRuPvP(message):
-    RuPvP = input(f'{message}\ny/n\n')
-    while RuPvP not in {'y', 'n'}:
-        RuPvP = input(f'{message}\ny/n\n')
-    if RuPvP == 'y':
+def binary_choice(message):
+    choice = input(f'{message}\ny/n\n')
+    while choice not in {'y', 'n'}:
+        choice = input(f'{message}\ny/n\n')
+    if choice == 'y':
         return(True)
     else:
         return(False)
@@ -378,17 +401,34 @@ def read_board(board, wh_turn): # looks for all of the figures on board, counts 
     return(flag)
 
 def main():
-    board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-             ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
-             ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-             ['_', '0', '_', '0', '_', '0', '_', '0'],
-             ['0', '_', '0', '_', '0', '_', '0', '_'],
-             ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
-             ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
-             ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
+    config = get_settings()
+    if config.Board_creator == 'yes':
+        new_board = binary_choice('Do you want to paste your own board?')
+    else:
+        new_board = False
+    if new_board:
+        board = board_creator()
+    else:
+        board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
+                 ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
+                 ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
+                 ['_', '0', '_', '0', '_', '0', '_', '0'],
+                 ['0', '_', '0', '_', '0', '_', '0', '_'],
+                 ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
+                 ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
+                 ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
     White_turn = True
-    ru = valRuPvP('Do you want to play russian checkers?')
-    pvp = valRuPvP('Do you want to play it yourself?')
+    if config.Rus_question == 'yes':
+        ru = binary_choice('Do you want to play russian checkers?')
+    else:
+        if config.Rus == 'yes':
+            ru = True
+        else:
+            ru = False
+    if config.test == 'yes':
+        pvp = binary_choice('Do you want to play the game yourself?')
+    else:
+        pvp = True
     print_board(board, pvp)
     turn_num = 0
     while read_board(board, White_turn):
@@ -403,5 +443,6 @@ def main():
             White_turn = False
         else:
             White_turn = True
+
 if __name__ == '__main__':
     main()
