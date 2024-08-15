@@ -4,20 +4,48 @@ Program for testing the russian checkers
 from random import randint
 from config_reader import get_settings
 
-def print_board(board, PvP):  # prints the playing board with coordinats on top and left
+def print_board(board, PvP, inv):
+    numb = '12345678'
+    if inv == '2':
+        colour = '\033[47m'
+        colour_op = '\033[40m'
+    elif inv == '3':
+        colour = '\033[40m'
+        colour_op = '\033[47m'
+    elif inv == '1':
+        colour = '\033[0m'
+        colour_op = '\033[0m'
     if PvP:
         print('\n  a b c d e f g h')
         for j in range(8):
-            print('12345678'[j] + ' ' + ' '.join(board[j]) + ' ' + '12345678'[j])
+            print(numb[j], end=' ')
+            for x in range(8):
+                if x % 2 == j % 2:
+                    print(colour, end='')
+                    print(colour_op, end='')
+                else:
+                    print(colour_op, end='')
+                    print(colour, end='')
+                print(' '.join(board[j][x]), end=' ')
+            print(f'\033[0m{numb[j]}')
         print('  a b c d e f g h')
     else:
         print('\n 01234567')
         for i in range(8):
-            print('01234567'[i] + ''.join(board[i]))
+            print('01234567'[i], end='')
+            for x in range(8):
+                if x % 2 == i % 2:
+                    print(colour, end='')
+                    print(colour_op, end='')
+                else:
+                    print(colour_op, end='')
+                    print(colour, end='')
+                print(''.join(board[i][x]), end='')
+            print('\033[0m')
         print('White', colour_list(board, True))
         print('Black', colour_list(board, False))
         
-def board_creator():
+def board_creator(board_colour):
     board_list = []
     temp_list = []
     pvp = binary_choice('Were you playing PvP?')
@@ -35,7 +63,7 @@ def board_creator():
             temp_list.extend(temp)
             board_list.append(temp_list)
             temp_list = []
-    print_board(board_list, pvp)
+    print_board(board_list, pvp, board_colour)
     return(board_list)
 
 def ChangeOfTwo(y, x, j):
@@ -58,6 +86,12 @@ def binary_choice(message):
     else:
         return(False)
 
+def choice_of_three(message):
+    out = input(f'{message}\n(1/2/3)\n')
+    while not out in {'1', '2', '3'}:
+        out = input(f'{message}\nInvalid imput\nTry again\n(1/2/3)\n')
+    return(out)
+
 def RndInput1(board, wh_turn, message, PvP):# chek global variables in functions for IDLE
     if PvP:
         output = input(message)
@@ -76,21 +110,21 @@ def RndInput1(board, wh_turn, message, PvP):# chek global variables in functions
         output = colour_list[randint(0, len(colour_list) - 1)] + letters[randint(0, 7)] + numbers[randint(0, 7)]
     return(output)
 
-def validation(board, wh_turn, PvP, inv_count): # prevents user from inputting invalid inputs
+def validation(board, wh_turn, PvP, inv_count, board_colour): # prevents user from inputting invalid inputs
     letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     numbers = ('1', '2', '3', '4', '5', '6', '7', '8')
     board_turn = [0, 0, 0, 0] # list for coordinats
     turn = RndInput1(board, wh_turn, '\nxy:xy\n', PvP)
     while len(turn) not in {4, 5}: # prevents errors if user doesent input anithing
-        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn)
+        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
     if len(turn) == 4:
         temp = -1
     else:
         temp = 0
     while not(turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers):
-        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn)
+        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
         while len(turn) not in {4, 5}: # prevents errors if user doesent input anithing
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn)
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
         if len(turn) == 4:
             temp = -1
         else:
@@ -113,7 +147,7 @@ def RndInput2(message, PvP):
         output = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')[randint(0, 7)] + ('1', '2', '3', '4', '5', '6', '7', '8')[randint(0, 7)]
     return(output)
 
-def one_input(Ru, PvP, board, wh_turn, inv_count): # one input for jumps, mini version of validation
+def one_input(Ru, PvP, board, wh_turn, inv_count, board_colour): # one input for jumps, mini version of validation
     letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     numbers = ('1', '2', '3', '4', '5', '6', '7', '8')
     dano = [0, 0]
@@ -124,7 +158,7 @@ def one_input(Ru, PvP, board, wh_turn, inv_count): # one input for jumps, mini v
         while not(turn[0] in letters and turn[1] in numbers):
             inv_count += 1
             if inv_count == 3:
-                print_board(board, PvP)
+                print_board(board, PvP, board_colour)
                 if wh_turn:
                     print('\nWhite turn\n')
                 else:
@@ -156,11 +190,11 @@ def one_input(Ru, PvP, board, wh_turn, inv_count): # one input for jumps, mini v
             dano = 'N'
     return(dano, inv_count)
 
-def inv_input(inv_count, board, PvP, wh_turn):
+def inv_input(inv_count, board, PvP, wh_turn, board_colour):
     inv_count += 1
     turn = ''
     if inv_count == 3:
-        print_board(board, PvP)
+        print_board(board, PvP, board_colour)
         if wh_turn:
             print('\nWhite turn\n')
         else:
@@ -311,7 +345,7 @@ def acceptable_jump(board_turn, board, colour):
         acceptable.append([board_turn[2] - 2, board_turn[3] + 2])
     return(acceptable)
 
-def player_turn(board, wh_tur, Ru, PvP): # makes a move, checks if it is valid
+def player_turn(board, wh_tur, Ru, PvP, board_colour): # makes a move, checks if it is valid
     C_l = []
     C_l_temp = colour_list(board, wh_tur)
     if Ru:
@@ -320,40 +354,40 @@ def player_turn(board, wh_tur, Ru, PvP): # makes a move, checks if it is valid
         col = ('£', 'w')
     else:
         col = ('$', 'b')
-    board_turn, inv_count = validation(board, wh_tur, PvP, 0)
+    board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour)
     while not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False)):
         if PvP:
             inv_count += 1
             if inv_count == 3:
-                print_board(board, PvP)
+                print_board(board, PvP, board_colour)
                 if wh_tur:
                     print('\nWhite turn\n')
                 else:
                     print('\nBlack turn\n')
                 inv_count = 0
             print('invalid turn\ntry again:')
-        board_turn, inv_count = validation(board, wh_tur, PvP, inv_count)
+        board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour)
     turn_validation(board, board_turn, wh_tur, C_l, True)
     board[board_turn[0]][board_turn[1]] = '0'
-    print_board(board, PvP)
+    print_board(board, PvP, board_colour)
     if not(PvP):
         print(*board_turn)
     if board_turn in C_l_temp:
         acceptable = acceptable_jump(board_turn, board, col)
         while acceptable:
-            dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count)
+            dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count, board_colour)
             while (not dano in acceptable) and dano != 'N':
                 if PvP:
                     inv_count += 1
                     if inv_count == 3:
-                        print_board(board, PvP)
+                        print_board(board, PvP, board_colour)
                         if wh_tur:
                             print('\nWhite turn\n')
                         else:
                             print('\nBlack turn\n')
                         inv_count = 0
                     print('invalid turn\ntry again:')
-                dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count)
+                dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count, board_colour)
             if dano == 'N':
                 break
             board_turn[0] = board_turn[2]
@@ -362,7 +396,7 @@ def player_turn(board, wh_tur, Ru, PvP): # makes a move, checks if it is valid
             board_turn[3] = dano[1]
             turn_validation(board, board_turn, wh_tur, [], True)
             board[board_turn[0]][board_turn[1]] = '0'
-            print_board(board, PvP)
+            print_board(board, PvP, board_colour)
             if not(PvP):
                 print(*board_turn)
             acceptable = acceptable_jump(board_turn, board, col)
@@ -402,12 +436,16 @@ def read_board(board, wh_turn): # looks for all of the figures on board, counts 
 
 def main():
     config = get_settings()
+    if config.board_colour_ask == 'yes':
+        board_colour = choice_of_three('What board type do you want to use?')
+    else:
+        board_colour = str(config.board_colour)
     if config.Board_creator == 'yes':
         new_board = binary_choice('Do you want to paste your own board?')
     else:
         new_board = False
     if new_board:
-        board = board_creator()
+        board = board_creator(board_colour)
     else:
         board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
                  ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
@@ -432,7 +470,7 @@ def main():
             pvp = True
         elif config.pvp == 'no':
             pvp = False
-    print_board(board, pvp)
+    print_board(board, pvp, board_colour)
     turn_num = 0
     while read_board(board, White_turn):
         turn_num += 1
@@ -441,7 +479,7 @@ def main():
             print('White turn')
         else:
             print('Black turn')
-        board = player_turn(board, White_turn, ru, pvp)
+        board = player_turn(board, White_turn, ru, pvp, board_colour)
         if White_turn:
             White_turn = False
         else:

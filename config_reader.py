@@ -9,7 +9,7 @@ from enum import Enum
 from os import path
 from typing import Tuple, Type
 
-from pydantic import Field
+from pydantic import Field, conint
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -30,6 +30,8 @@ def get_config_file():
 
 class Settings(BaseSettings, case_sensitive=True):
     model_config = SettingsConfigDict(yaml_file=get_config_file())
+    board_colour_ask: YesNoEnum = Field(default=YesNoEnum.NO)
+    board_colour: conint(ge=1, le=3) = Field(default=2)
     question_test: YesNoEnum = Field(default=YesNoEnum.NO)
     pvp: YesNoEnum = Field(default=YesNoEnum.YES)
     Board_creator: YesNoEnum = Field(default=YesNoEnum.NO)

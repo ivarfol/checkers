@@ -1,3 +1,7 @@
+# ask if user wants to change the board output
+board_colour_ask: "no"
+# if board_colour_ask == 'no' what version is default
+board_colour: 2
 # ask if user wants to play pvp or test
 question_test: "no"
 # if question_test == 'no', what version is default
