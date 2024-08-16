@@ -128,15 +128,15 @@ def validation(board, wh_turn, PvP, inv_count, board_colour): # prevents user fr
     board_turn = [0, 0, 0, 0] # list for coordinats
     turn = RndInput1(board, wh_turn, '\nxy:xy\n', PvP)
     while len(turn) not in {4, 5}: # prevents errors if user doesent input anithing
-        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
+        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '0', '')
     if len(turn) == 4:
         temp = -1
     else:
         temp = 0
     while not(turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers):
-        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
+        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '0', '')
         while len(turn) not in {4, 5}: # prevents errors if user doesent input anithing
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour)
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '0', '')
         if len(turn) == 4:
             temp = -1
         else:
@@ -159,39 +159,31 @@ def RndInput2(message, PvP):
         output = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')[randint(0, 7)] + ('1', '2', '3', '4', '5', '6', '7', '8')[randint(0, 7)]
     return(output)
 
-def one_input(Ru, PvP, board, wh_turn, inv_count, board_colour): # one input for jumps, mini version of validation
+def one_input(Ru, PvP, board, wh_turn, inv_count, board_colour, message): # one input for jumps, mini version of validation
     letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     numbers = ('1', '2', '3', '4', '5', '6', '7', '8')
     dano = [0, 0]
     if Ru:
-        turn = RndInput2('\nxy\n', PvP)
-        if len(turn) != 2:
-            turn = '__'
+        turn = RndInput2(f'\nxy:xy\n{message}', PvP)
+        while len(turn) != 2:
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '1', message)
         while not(turn[0] in letters and turn[1] in numbers):
-            inv_count += 1
-            if inv_count == 3:
-                print_board(board, PvP, board_colour)
-                if wh_turn:
-                    print('\nWhite turn\n')
-                else:
-                    print('\nBlack turn\n')
-                inv_count = 0
-            turn = RndInput2('invalid input format\ntry again:\n\nxy\n', PvP)
-            if len(turn) != 2:
-                turn = '__'
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '1', message)
+            while len(turn) != 2:
+                turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '1', message)
         for i in range(8):
             if turn[0] == letters[i]:
                 dano[1] = i
             if turn[1] == numbers[i]:
                 dano[0] = i
     else:
-        turn = RndInput2('\nxy/N\n', PvP)
-        if len(turn) != 2 and turn != 'N':
-            turn = '__'
+        turn = RndInput2(f'\nxy:xy/N\n{message}', PvP)
+        while len(turn) != 2 and turn != 'N':
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '/N', message)
         while not(turn == 'N' or (turn[0] in letters and turn[1] in numbers)):
-            turn = RndInput2('invalid input format\ntry again:\n\nxy/N\n', PvP)
-            if len(turn) != 2 and turn != 'N':
-                turn = '__'
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '/N', message)
+            while len(turn) != 2 and turn != 'N':
+                turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, '/N', message)
         if turn != 'N':
             for i in range(8):
                 if turn[0] == letters[i]:
@@ -202,7 +194,7 @@ def one_input(Ru, PvP, board, wh_turn, inv_count, board_colour): # one input for
             dano = 'N'
     return(dano, inv_count)
 
-def inv_input(inv_count, board, PvP, wh_turn, board_colour):
+def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message):
     inv_count += 1
     turn = ''
     if inv_count == 3:
@@ -212,7 +204,12 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour):
         else:
             print('\nBlack turn\n')
         inv_count = 0
-    turn = RndInput1(board, turn, 'invalid input format\ntry again:\n\nxy:xy\n', PvP)
+    if inp_type == '0':
+        turn = RndInput1(board, turn, 'invalid input format\ntry again:\n\nxy:xy\n', PvP)
+    elif inp_type == '1':
+        turn = RndInput2(f'invalid input format\ntry again:\nxy:xy\n\n{message}', PvP)
+    else:
+        turn = RndInput2(f'invalid input format\ntry again:\nxy:xy/N\n\n{message}', PvP)
     return(turn, inv_count)
 
 def usual_attaks(board, board_turn, colour):
@@ -387,7 +384,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour): # makes a move, checks if
     if board_turn in C_l_temp:
         acceptable = acceptable_jump(board_turn, board, col)
         while acceptable:
-            dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count, board_colour)
+            dano, inv_count = one_input(Ru, PvP, board, wh_tur, 0, board_colour, 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]])
             while (not dano in acceptable) and dano != 'N':
                 if PvP:
                     inv_count += 1
@@ -399,8 +396,9 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour): # makes a move, checks if
                             print('\nBlack turn\n')
                         inv_count = 0
                     print('invalid turn\ntry again:')
-                dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count, board_colour)
+                dano, inv_count = one_input(Ru, PvP, board, wh_tur, inv_count, board_colour, 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]])
             if dano == 'N':
+                print_board(board, PvP, board_colour)
                 break
             board_turn[0] = board_turn[2]
             board_turn[1] = board_turn[3]
