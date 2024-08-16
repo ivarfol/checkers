@@ -10,14 +10,17 @@ def print_board(board, PvP, inv):
         colour = '\033[47m'
         colour_op = '\033[40m'
         colour_hide = '\033[37m'
+        colour_zero = '\033[30m'
     elif inv == '3':
         colour = '\033[40m'
         colour_op = '\033[47m'
         colour_hide = '\033[30m'
+        colour_zero = '\033[37m'
     elif inv == '1':
         colour = '\033[0m'
         colour_op = '\033[0m'
         colour_hide = '\033[0m'
+        colour_zero = '\033[0m'
     if PvP:
         print('\n  a b c d e f g h')
         for j in range(8):
@@ -29,6 +32,8 @@ def print_board(board, PvP, inv):
                     print(colour, end='')
                 if board[j][x] == '_':
                     print(colour_hide, end='')
+                elif board[j][x] == '0':
+                    print(colour_zero, end='')
                 print(' '.join(board[j][x]), end=' ')
                 print('\033[0m', end='')
             print(f'\033[0m{numb[j]}')
@@ -44,6 +49,8 @@ def print_board(board, PvP, inv):
                     print(colour, end='')
                 if board[i][x] == '_':
                     print(colour_hide, end='')
+                elif board[i][x] == '0':
+                    print(colour_zero, end='')
                 print(''.join(board[i][x]), end='')
                 print('\033[0m', end='')
             print('\033[0m')
