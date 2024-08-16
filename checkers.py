@@ -207,9 +207,9 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message):
     if inp_type == '0':
         turn = RndInput1(board, turn, 'invalid input format\ntry again:\n\nxy:xy\n', PvP)
     elif inp_type == '1':
-        turn = RndInput2(f'invalid input format\ntry again:\nxy:xy\n\n{message}', PvP)
+        turn = RndInput2(f'invalid input format\ntry again:\n\nxy:xy\n{message}', PvP)
     else:
-        turn = RndInput2(f'invalid input format\ntry again:\nxy:xy/N\n\n{message}', PvP)
+        turn = RndInput2(f'invalid input format\ntry again:\n\nxy:xy/N\n{message}', PvP)
     return(turn, inv_count)
 
 def usual_attaks(board, board_turn, colour):
