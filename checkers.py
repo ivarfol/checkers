@@ -34,6 +34,8 @@ def print_board(board, PvP, inv):
                     print(colour_hide, end='')
                 elif board[j][x] == '0':
                     print(colour_zero, end='')
+                elif inv == '3':
+                    print(colour_hide, end='')
                 print(' '.join(board[j][x]), end=' ')
                 print('\033[0m', end='')
             print(f'\033[0m{numb[j]}')
@@ -51,6 +53,8 @@ def print_board(board, PvP, inv):
                     print(colour_hide, end='')
                 elif board[i][x] == '0':
                     print(colour_zero, end='')
+                elif inv == '3':
+                    print(colour_hide, end='')
                 print(''.join(board[i][x]), end='')
                 print('\033[0m', end='')
             print('\033[0m')
