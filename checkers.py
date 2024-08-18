@@ -11,16 +11,28 @@ def print_board(board, PvP, inv):
         colour_op = '\033[40m'
         colour_hide = '\033[37m'
         colour_zero = '\033[30m'
+        usual_w = '\u25CF'
+        damk_w = '\u25C6'
+        usual_b = '\u25CB'
+        damk_b = '\u25C7'
     elif inv == '3':
         colour = '\033[40m'
         colour_op = '\033[47m'
         colour_hide = '\033[30m'
         colour_zero = '\033[37m'
+        usual_w = '\u25C7'
+        damk_w = '\u25CE'
+        usual_b = '\u25CF'
+        damk_b = '\u25C6'
     elif inv == '1':
         colour = '\033[0m'
         colour_op = '\033[0m'
         colour_hide = '\033[0m'
         colour_zero = '\033[0m'
+        usual_w = 'w'
+        damk_w = 'm'
+        usual_b = 'b'
+        damk_b = 'p'
     if PvP:
         print('\n  a b c d e f g h')
         for j in range(8):
@@ -36,7 +48,16 @@ def print_board(board, PvP, inv):
                     print(colour_zero, end='')
                 elif inv == '3':
                     print(colour_hide, end='')
-                print(' '.join(board[j][x]), end=' ')
+                if board[j][x] == 'w':
+                    print(usual_w, end=' ')
+                elif board[j][x] == 'm':
+                    print(damk_w, end=' ')
+                elif board[j][x] == 'b':
+                    print(usual_b, end=' ')
+                elif board[j][x] == 'p':
+                    print(damk_b, end=' ')
+                else:
+                    print(' '.join(board[j][x]), end=' ')
                 print('\033[0m', end='')
             print(f'\033[0m{numb[j]}')
         print('  a b c d e f g h')
@@ -67,10 +88,30 @@ def board_creator(board_colour):
     pvp = binary_choice('Were you playing PvP?')
     board = input('Paste your board:\n')
     if pvp:
+        col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
         board = board[20:178]
         board = board.split(' ')
         for i in range(0,64,8):
             temp_list = board[i + int(i / 8):i + int(i / 8) + 8]
+            for x in range(8):
+                if col == '2':
+                    if temp_list[x] == '●':
+                        temp_list[x] = 'w'
+                    elif temp_list[x] == '○':
+                        temp_list[x] = 'b'
+                    elif temp_list[x] == '◆':
+                        temp_list[x] = 'm'
+                    elif temp_list[x] == '◇':
+                        temp_list[x] = 'p'
+                elif col == '3':
+                    if temp_list[x] == '●':
+                        temp_list[x] = 'b'
+                    elif temp_list[x] == '○':
+                        temp_list[x] = 'w'
+                    elif temp_list[x] == '◆':
+                        temp_list[x] = 'p'
+                    elif temp_list[x] == '◇':
+                        temp_list[x] = 'm'
             board_list.append(temp_list)
     else:
         board = board[11:]
@@ -113,9 +154,9 @@ def RndInput1(board, wh_turn, message, PvP):# chek global variables in functions
         output = input(message)
     else:
         if wh_turn:
-            colour_set = {'w', '£'}
+            colour_set = {'w', 'm'}
         else:
-            colour_set = {'b', '$'}
+            colour_set = {'b', 'p'}
         letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
         numbers = ('1', '2', '3', '4', '5', '6', '7', '8')
         colour_list = []
@@ -227,7 +268,7 @@ def usual_attaks(board, board_turn, colour):
 def damka_turn(board, board_turn, colour, colour_t):
     straight11, straight00, straight10, straight01 = False, False, False, False
     fig1, fig0, fig10, fig01, damka_straight, damka_eats1, damka_eats0, damka_eats10, damka_eats01, damka_eats = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    fig_set = {'$', 'b', '£', 'w'}
+    fig_set = {'p', 'b', 'm', 'w'}
     for i in range(1, 8): # assining number of figures on the way of 'damka' figure (figure, whitch got to the opposit end of the board) and describing patterns if movement
         if board_turn[0] + i == 8 or board_turn[1] + i == 8: # prevents calculations from getting over the 'edge' of the board
             break
@@ -279,13 +320,13 @@ def damka_turn(board, board_turn, colour, colour_t):
 
 def turn_validation(board, board_turn, wh_t, l_attak, val): #prevents user from imputting wrong coordinats the right way
     if wh_t:
-        colour = {'$','b'}
-        colour_t = '£'
+        colour = {'p','b'}
+        colour_t = 'm'
         temp_first = board_turn[0] + 1
         damka_border = 7
     else:
-        colour = {'£', 'w'}
-        colour_t = '$'
+        colour = {'m', 'w'}
+        colour_t = 'p'
         temp_first = board_turn[0] - 1
         damka_border = 0
     attak = True
@@ -315,15 +356,15 @@ def colour_list(board, turn):
     fig_list, list_eats, damka_list, temp = [], [], [], []
     if turn:
         col_usual = {'w'}
-        col_damka = '£'
-        col_enemy = {'$', 'b'}
+        col_damka = 'm'
+        col_enemy = {'p', 'b'}
     else:
         col_usual = {'b'}
-        col_damka = '$'
-        col_enemy = {'£', 'w'}
+        col_damka = 'p'
+        col_enemy = {'m', 'w'}
     for y in range(8):
         for x in range(8):
-            if board[y][x] in col_usual: # add for £
+            if board[y][x] in col_usual: # add for m
                 fig_list.append([y, x])       
             elif board[y][x] in col_damka:
                 damka_list.append([y, x])
@@ -344,10 +385,10 @@ def colour_list(board, turn):
 
 def acceptable_jump(board_turn, board, colour):
     acceptable = []
-    if colour == ('£', 'w'):
-        colour = {'$', 'b'}
+    if colour == ('m', 'w'):
+        colour = {'p', 'b'}
     else:
-        colour = {'£', 'w'}
+        colour = {'m', 'w'}
     if board_turn[2] + 2 < 8 and board_turn[3] + 2 < 8 and board[board_turn[2] + 2][board_turn[3] + 2] == '0' and board[board_turn[2] + 1][board_turn[3] + 1] in colour: # top left - bottom right ++
         acceptable.append([board_turn[2] + 2, board_turn[3] + 2])
     if board_turn[2] - 2 > -1 and board_turn[3] - 2 > -1 and board[board_turn[2] - 2][board_turn[3] - 2] == '0' and board[board_turn[2] - 1][board_turn[3] - 1] in colour: # bottom right - top left --
@@ -364,9 +405,9 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour): # makes a move, checks if
     if Ru:
         C_l = C_l_temp
     if wh_tur: # white
-        col = ('£', 'w')
+        col = ('m', 'w')
     else:
-        col = ('$', 'b')
+        col = ('p', 'b')
     board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour)
     while not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False)):
         if PvP:
@@ -421,9 +462,9 @@ def read_board(board, wh_turn): # looks for all of the figures on board, counts 
     c_list = []
     turn_possible = True
     if wh_turn:
-        c_set = {'w', '£'}
+        c_set = {'w', 'm'}
     else:
-        c_set = {'b', '$'}
+        c_set = {'b', 'p'}
     for y in range(8):
         for x in range(8):
             if board[y][x] in c_set:
