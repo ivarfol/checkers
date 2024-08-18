@@ -20,8 +20,8 @@ def print_board(board, PvP, inv):
         colour_op = '\033[47m'
         colour_hide = '\033[30m'
         colour_zero = '\033[37m'
-        usual_w = '\u25C7'
-        damk_w = '\u25CE'
+        usual_w = '\u25CB'
+        damk_w = '\u25C7'
         usual_b = '\u25CF'
         damk_b = '\u25C6'
     elif inv == '1':
