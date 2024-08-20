@@ -232,7 +232,7 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries): 
             turn = start + turn
             turn_N = 'N'
             temp_m = 'invalid input format\ntry again:\n\nxy:xy/N\n' + start
-    while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)): # prevents errors if user doesent input anithing
+    while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)) and (not len(turn) == 9 or turn != 'surrender'): # prevents errors if user doesent input anithing
         turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
         if turn == 'help':
             ch_help(board_colour)
@@ -243,14 +243,14 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries): 
         temp = -1
     else:
         temp = 0
-    while not(not turn_Nf(turn[-1], turn_N) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers)):
+    while not(not turn_Nf(turn[-1], turn_N) or turn == 'surrender' or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers)):
         if turn == 'help':
             ch_help(board_colour)
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
         else:
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
             turn = start + turn
-        while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)): # prevents errors if user doesent input anithing
+        while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N) and (not len(turn) == 9 or turn != 'surrender')): # prevents errors if user doesent input anithing
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
             if turn == 'help':
                 ch_help(board_colour)
@@ -263,6 +263,8 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries): 
             temp = 0
     if turn[-1] == 'N':
         board_turn = 'N'
+    elif turn == 'surrender':
+        board_turn = 'surrender'
     else:
         for i in range(8):
             if turn[0] == letters[i]: # writes coordinats down into the list above, so it wuld be easyer to use coordinats later in the program
@@ -438,6 +440,7 @@ def acceptable_jump(board_turn, board, colour):
 def player_turn(board, wh_tur, Ru, PvP, board_colour, tries): # makes a move, checks if it is valid
     C_l = []
     C_l_temp = colour_list(board, wh_tur)
+    flag = False
     if Ru:
         C_l = C_l_temp
     if wh_tur: # white
@@ -445,7 +448,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries): # makes a move, ch
     else:
         col = ('p', 'b')
     board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour, '', Ru, tries)
-    while not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False)):
+    while board_turn != 'surrender' and not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False)):
         if PvP:
             inv_count += 1
             if inv_count == tries:
@@ -457,38 +460,44 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries): # makes a move, ch
                 inv_count = 0
             print('invalid turn\ntry again:')
         board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, '', Ru, tries)
-    turn_validation(board, board_turn, wh_tur, C_l, True)
-    board[board_turn[0]][board_turn[1]] = '0'
-    print_board(board, PvP, board_colour)
-    if not(PvP):
-        print(*board_turn)
-    if board_turn in C_l_temp:
-        acceptable = acceptable_jump(board_turn, board, col)
-        while acceptable:
-            temp = 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]]
-            board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
-            while (not board_turn[-2:] in acceptable) and board_turn != 'N':
-                if PvP:
-                    inv_count += 1
-                    if inv_count == tries:
-                        print_board(board, PvP, board_colour)
-                        if wh_tur:
-                            print('\nWhite turn\n')
-                        else:
-                            print('\nBlack turn\n')
-                        inv_count = 0
-                    print('invalid turn\ntry again:')
-                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
-            if board_turn == 'N':
-                print_board(board, PvP, board_colour)
-                break
-            turn_validation(board, board_turn, wh_tur, [], True)
-            board[board_turn[0]][board_turn[1]] = '0'
-            print_board(board, PvP, board_colour)
-            if not(PvP):
-                print(*board_turn)
+    if board_turn != 'surrender':
+        turn_validation(board, board_turn, wh_tur, C_l, True)
+        board[board_turn[0]][board_turn[1]] = '0'
+        print_board(board, PvP, board_colour)
+        if not(PvP):
+            print(*board_turn)
+        if board_turn in C_l_temp:
             acceptable = acceptable_jump(board_turn, board, col)
-    return(board)
+            while acceptable:
+                temp = 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]]
+                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
+                while board_turn != 'N' and board_turn != 'surrender' and (not board_turn[-2:] in acceptable):
+                    if PvP:
+                        inv_count += 1
+                        if inv_count == tries:
+                            print_board(board, PvP, board_colour)
+                            if wh_tur:
+                                print('\nWhite turn\n')
+                            else:
+                                print('\nBlack turn\n')
+                            inv_count = 0
+                        print('invalid turn\ntry again:')
+                    board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
+                if board_turn == 'N':
+                    print_board(board, PvP, board_colour)
+                    break
+                elif board_turn == 'surrender':
+                    break
+                turn_validation(board, board_turn, wh_tur, [], True)
+                board[board_turn[0]][board_turn[1]] = '0'
+                print_board(board, PvP, board_colour)
+                if not(PvP):
+                    print(*board_turn)
+                acceptable = acceptable_jump(board_turn, board, col)
+    if board_turn == 'surrender':
+        flag = True
+        print_board(board, PvP, board_colour)
+    return(board, flag)
 
 def read_board(board, wh_turn): # looks for all of the figures on board, counts them stops the game (while loop) if there are no more figures on one side
     flag = True
@@ -570,7 +579,13 @@ def main():
             print('White turn')
         else:
             print('Black turn')
-        board = player_turn(board, White_turn, ru, pvp, board_colour, tries)
+        board, flag = player_turn(board, White_turn, ru, pvp, board_colour, tries)
+        if flag:
+            if White_turn:
+                print('\nBlacks win')
+            else:
+                print('\nWhites win')
+            break
         if White_turn:
             White_turn = False
         else:
