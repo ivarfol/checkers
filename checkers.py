@@ -123,8 +123,8 @@ def board_creator(board_colour):
     if col != board_colour:
         print_board(board_list, pvp, col)
     print_board(board_list, pvp, board_colour)
-    print()
-    return(board_list)
+    Wh_turn = binary_choice('\nWhose turn was that?\nWhite(y), Black(n)')
+    return(board_list, Wh_turn)
 
 def ChangeOfTwo(y, x, j):
     if j == 0:
@@ -489,7 +489,7 @@ def main():
     else:
         new_board = False
     if new_board:
-        board = board_creator(board_colour)
+        board, White_turn = board_creator(board_colour)
     else:
         board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
                  ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
@@ -499,7 +499,7 @@ def main():
                  ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
                  ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
                  ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
-    White_turn = True
+        White_turn = True
     if config.Rus_question == 'yes':
         ru = binary_choice('Do you want to play russian checkers?')
     else:
