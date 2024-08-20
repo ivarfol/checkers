@@ -120,7 +120,10 @@ def board_creator(board_colour):
             temp_list.extend(temp)
             board_list.append(temp_list)
             temp_list = []
+    if col != board_colour:
+        print_board(board_list, pvp, col)
     print_board(board_list, pvp, board_colour)
+    print()
     return(board_list)
 
 def ChangeOfTwo(y, x, j):
