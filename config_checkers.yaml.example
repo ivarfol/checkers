@@ -12,3 +12,5 @@ Board_creator: "no"
 Rus_question: "yes"
 # if Rus_question == 'no', what version is default
 Rus: "yes"
+# print help at the start of the game
+hint: "yes"

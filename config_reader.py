@@ -37,6 +37,7 @@ class Settings(BaseSettings, case_sensitive=True):
     Board_creator: YesNoEnum = Field(default=YesNoEnum.NO)
     Rus_question: YesNoEnum = Field(default=YesNoEnum.YES)
     Rus: YesNoEnum = Field(default=YesNoEnum.YES)
+    hint: YesNoEnum = Field(default=YesNoEnum.YES)
     @classmethod
     def settings_customise_sources(
         cls,
