@@ -557,6 +557,8 @@ def main():
             pvp = True
         elif config.pvp == 'no':
             pvp = False
+    if config.hint == 'yes':
+        ch_help(board_colour)
     print_board(board, pvp, board_colour)
     turn_num = 0
     while read_board(board, White_turn):
