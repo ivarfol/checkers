@@ -14,3 +14,5 @@ Rus_question: "yes"
 Rus: "yes"
 # print help at the start of the game
 hint: "yes"
+# how mainy invalid inputs before the board is printed again
+num_of_tries: 3

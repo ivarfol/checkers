@@ -38,6 +38,7 @@ class Settings(BaseSettings, case_sensitive=True):
     Rus_question: YesNoEnum = Field(default=YesNoEnum.YES)
     Rus: YesNoEnum = Field(default=YesNoEnum.YES)
     hint: YesNoEnum = Field(default=YesNoEnum.YES)
+    num_of_tries: conint(ge=1, le=10) = Field(default=3)
     @classmethod
     def settings_customise_sources(
         cls,
