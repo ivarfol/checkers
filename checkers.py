@@ -87,8 +87,8 @@ def board_creator(board_colour):
     temp_list = []
     pvp = binary_choice('Were you playing PvP?')
     board = input('Paste your board:\n')
+    col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
     if pvp:
-        col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
         board = board[20:178]
         board = board.split(' ')
         for i in range(0,64,8):
@@ -465,7 +465,8 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries): # makes a move, ch
     if board_turn in C_l_temp:
         acceptable = acceptable_jump(board_turn, board, col)
         while acceptable:
-            board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]], Ru, tries)
+            temp = 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]]
+            board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
             while (not board_turn[-2:] in acceptable) and board_turn != 'N':
                 if PvP:
                     inv_count += 1
@@ -477,7 +478,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries): # makes a move, ch
                             print('\nBlack turn\n')
                         inv_count = 0
                     print('invalid turn\ntry again:')
-                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]], Ru, tries)
+                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries)
             if board_turn == 'N':
                 print_board(board, PvP, board_colour)
                 break
