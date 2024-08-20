@@ -201,7 +201,7 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru): # preve
             turn = RndInput2(f'\nxy:xy/N\n{start}', PvP)
             turn = start + turn
             turn_N = 'N'
-    while len(turn) not in {4, 5} and turn_Nf(turn[-1], turn_N): # prevents errors if user doesent input anithing
+    while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)): # prevents errors if user doesent input anithing
         turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, start)
         turn = start + turn
     if len(turn) == 4:
@@ -211,7 +211,7 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru): # preve
     while not(not turn_Nf(turn[-1], turn_N) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers)):
         turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, start)
         turn = start + turn
-        while len(turn) not in {4, 5} and turn_Nf(turn[-1], turn_N): # prevents errors if user doesent input anithing
+        while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)): # prevents errors if user doesent input anithing
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, start)
             turn = start + turn
         if len(turn) == 4:
