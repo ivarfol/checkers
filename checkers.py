@@ -126,7 +126,7 @@ def board_creator(board_colour):
     Wh_turn = binary_choice('\nWhose turn was that?\nWhite(1), Black(0)', 2)
     return(board_list, Wh_turn)
 
-def ch_help(col):
+def ch_help(col, board):
     if col == '1':
         colour = '\033[0m'
         colour_op = '\033[0m'
@@ -155,7 +155,7 @@ def ch_help(col):
         damk_wh = '◇'
         damk_bl = '◆'
     print('\nHelp')
-    choice = choice_of_three('Do you want to continue to\ninputs(1), figures(2), exit(3)')
+    choice = choice_of_three('Do you want to continue to\ninputs(1), figures(2), exit help(3)')
     while choice != '3':
         if choice == '1':
             print('Input:')
@@ -301,8 +301,9 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
     while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)) and (not len(turn[len(start):]) == 9 or turn[len(start):] != 'surrender'): # prevents errors if user doesent input anithing
         turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
         if turn[len(start):] == 'help':
-            ch_help(board_colour)
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+            ch_help(board_colour, board)
+            print_board(board, True, board_colour)
+            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
         else:
             turn = start + turn
     if len(turn) == 4:
@@ -311,16 +312,18 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
         temp = 0
     while not(not turn_Nf(turn[-1], turn_N) or turn[len(start):] == 'surrender' or (turn[len(start):] == 'undo' and turn_number != 0) or (turn[len(start):] == 'redo' and length > turn_number) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers)):
         if turn[len(start):] == 'help':
-            ch_help(board_colour)
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+            ch_help(board_colour, board)
+            print_board(board, True, board_colour)
+            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
         else:
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
             turn = start + turn
         while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N) and (not len(turn[len(start):]) == 9 or turn[len(start):] != 'surrender')): # prevents errors if user doesent input anithing
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
             if turn[len(start):] == 'help':
-                ch_help(board_colour)
-                turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+                ch_help(board_colour, board)
+                print_board(board, True, board_colour)
+                turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
             else:
                 turn = start + turn
         if len(turn) == 4:
@@ -641,7 +644,7 @@ def main():
         elif config.pvp == 'no':
             pvp = False
     if config.hint == 'yes':
-        ch_help(board_colour)
+        ch_help(board_colour, board)
     tries = config.num_of_tries
     print_board(board, pvp, board_colour)
     turn_num = 0
