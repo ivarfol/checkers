@@ -4,7 +4,7 @@ Program for testing the russian checkers
 from random import randint
 from config_reader import get_settings
 
-def print_board(board, PvP, inv):
+def print_board(board, PvP, inv, shift):
     numb = '12345678'
     if inv == '2':
         colour = '\033[47m'
@@ -38,7 +38,7 @@ def print_board(board, PvP, inv):
         for j in range(8):
             print(numb[j], end=' ')
             for x in range(8):
-                if x % 2 == j % 2:
+                if board_p(j, x, shift):
                     print(colour_op, end='')
                 else:
                     print(colour, end='')
@@ -66,7 +66,7 @@ def print_board(board, PvP, inv):
         for i in range(8):
             print('01234567'[i], end='')
             for x in range(8):
-                if x % 2 == i % 2:
+                if board_p(i, x, shift):
                     print(colour_op, end='')
                 else:
                     print(colour, end='')
@@ -87,6 +87,7 @@ def board_creator(board_colour):
     temp_list = []
     pvp = binary_choice('Were you playing PvP?', 1)
     board = input('Paste your board:\n')
+    shift = binary_choice('Is it shifted (a1 is not used)?')
     col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
     if pvp:
         board = board[20:178]
@@ -121,10 +122,16 @@ def board_creator(board_colour):
             board_list.append(temp_list)
             temp_list = []
     if col != board_colour:
-        print_board(board_list, pvp, col)
-    print_board(board_list, pvp, board_colour)
+        print_board(board_list, pvp, col, shift)
+    print_board(board_list, pvp, board_colour, shift)
     Wh_turn = binary_choice('\nWhose turn was that?\nWhite(1), Black(0)', 2)
     return(board_list, Wh_turn)
+
+def board_p(a, b, shift):
+    if shift:
+        return(a % 2 != b % 2)
+    else:
+        return(a % 2 == b % 2)
 
 def ch_help(col, board):
     if col == '1':
@@ -277,7 +284,7 @@ def RndInput2(message, PvP):
         output = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')[randint(0, 7)] + ('1', '2', '3', '4', '5', '6', '7', '8')[randint(0, 7)]
     return(output)
 
-def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, length, turn_number): # prevents user from inputting invalid inputs
+def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, length, turn_number, shift): # prevents user from inputting invalid inputs
     letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h')
     numbers = ('1', '2', '3', '4', '5', '6', '7', '8')
     board_turn = [0, 0, 0, 0] # list for coordinats
@@ -299,11 +306,11 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
             turn_N = 'N'
             temp_m = 'invalid input format\ntry again:\n\nxy:xy/N\n' + start
     while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N)) and (not len(turn[len(start):]) == 9 or turn[len(start):] != 'surrender'): # prevents errors if user doesent input anithing
-        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
+        turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries, shift)
         if turn[len(start):] == 'help':
             ch_help(board_colour, board)
-            print_board(board, True, board_colour)
-            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+            print_board(board, True, board_colour, shift)
+            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries, shift)
         else:
             turn = start + turn
     if len(turn) == 4:
@@ -313,17 +320,17 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
     while not(not turn_Nf(turn[-1], turn_N) or turn[len(start):] == 'surrender' or (turn[len(start):] == 'undo' and turn_number != 0) or (turn[len(start):] == 'redo' and length > turn_number) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers)):
         if turn[len(start):] == 'help':
             ch_help(board_colour, board)
-            print_board(board, True, board_colour)
-            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+            print_board(board, True, board_colour, shift)
+            turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries, shift)
         else:
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries, shift)
             turn = start + turn
         while len(turn) not in {4, 5} and (not len(turn) >= 1 or turn_Nf(turn[-1], turn_N) and (not len(turn[len(start):]) == 9 or turn[len(start):] != 'surrender')): # prevents errors if user doesent input anithing
-            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries)
+            turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, temp_m, tries, shift)
             if turn[len(start):] == 'help':
                 ch_help(board_colour, board)
-                print_board(board, True, board_colour)
-                turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries)
+                print_board(board, True, board_colour, shift)
+                turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, inp_type, temp_m[32:], tries, shift)
             else:
                 turn = start + turn
         if len(turn) == 4:
@@ -350,11 +357,11 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
                 board_turn[2] = i
     return(board_turn, inv_count) # returns the list to player_turn function
 
-def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message, tries):
+def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message, tries, shift):
     inv_count += 1
     turn = ''
     if inv_count == tries:
-        print_board(board, PvP, board_colour)
+        print_board(board, PvP, board_colour, shift)
         if wh_turn:
             print('\nWhite turn\n')
         else:
@@ -516,7 +523,7 @@ def acceptable_jump(board_turn, board, colour):
         acceptable.append([board_turn[2] - 2, board_turn[3] + 2])
     return(acceptable)
 
-def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number): # makes a move, checks if it is valid
+def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number, shift): # makes a move, checks if it is valid
     C_l = []
     C_l_temp = colour_list(board, wh_tur)
     turn = []
@@ -526,50 +533,50 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
         col = ('m', 'w')
     else:
         col = ('p', 'b')
-    board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour, '', Ru, tries, length, turn_number)
+    board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour, '', Ru, tries, length, turn_number, shift)
     while board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False)[0]):
         if PvP:
             inv_count += 1
             if inv_count == tries:
-                print_board(board, PvP, board_colour)
+                print_board(board, PvP, board_colour, shift)
                 if wh_tur:
                     print('\nWhite turn\n')
                 else:
                     print('\nBlack turn\n')
                 inv_count = 0
             print('invalid turn\ntry again:')
-        board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, '', Ru, tries, length, turn_number)
+        board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, '', Ru, tries, length, turn_number, shift)
     if board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo':
         turn = turn_validation(board, board_turn, wh_tur, C_l, True)[1]
         board[board_turn[0]][board_turn[1]] = '0'
-        print_board(board, PvP, board_colour)
+        print_board(board, PvP, board_colour, shift)
         if not(PvP):
             print(*board_turn)
         if board_turn in C_l_temp:
             acceptable = acceptable_jump(board_turn, board, col)
             while acceptable:
                 temp = 'abcdefgh'[board_turn[3]] + '12345678'[board_turn[2]]
-                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries, length, turn_number)
+                board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries, length, turn_number, shift)
                 while board_turn != 'N' and board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and (not board_turn[-2:] in acceptable):
                     if PvP:
                         inv_count += 1
                         if inv_count == tries:
-                            print_board(board, PvP, board_colour)
+                            print_board(board, PvP, board_colour, shift)
                             if wh_tur:
                                 print('\nWhite turn\n')
                             else:
                                 print('\nBlack turn\n')
                             inv_count = 0
                         print('invalid turn\ntry again:')
-                    board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries, length, turn_number)
+                    board_turn, inv_count = validation(board, wh_tur, PvP, inv_count, board_colour, temp, Ru, tries, length, turn_number, shift)
                 if board_turn == 'N':
-                    print_board(board, PvP, board_colour)
+                    print_board(board, PvP, board_colour, shift)
                     break
                 elif board_turn == 'surrender' or board_turn == 'undo' or board_turn == 'redo':
                     break
                 turn.extend(turn_validation(board, board_turn, wh_tur, [], True)[1])
                 board[board_turn[0]][board_turn[1]] = '0'
-                print_board(board, PvP, board_colour)
+                print_board(board, PvP, board_colour, shift)
                 if not(PvP):
                     print(*board_turn)
                 acceptable = acceptable_jump(board_turn, board, col)
@@ -620,14 +627,26 @@ def main():
     if new_board:
         board, White_turn = board_creator(board_colour)
     else:
-        board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-                 ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
-                 ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
-                 ['_', '0', '_', '0', '_', '0', '_', '0'],
-                 ['0', '_', '0', '_', '0', '_', '0', '_'],
-                 ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
-                 ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
-                 ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
+        if config.shift == 'no':
+            board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
+                     ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
+                     ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
+                     ['_', '0', '_', '0', '_', '0', '_', '0'],
+                     ['0', '_', '0', '_', '0', '_', '0', '_'],
+                     ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
+                     ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
+                     ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
+            shift = False
+        else:
+            board = [['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
+                     ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
+                     ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
+                     ['0', '_', '0', '_', '0', '_', '0', '_'],
+                     ['_', '0', '_', '0', '_', '0', '_', '0'],
+                     ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
+                     ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
+                     ['b', '_', 'b', '_', 'b', '_', 'b', '_']]
+            shift = True
         White_turn = True
     if config.Rus_question == 'yes':
         ru = binary_choice('Do you want to play russian checkers?', 1)
@@ -646,7 +665,7 @@ def main():
     if config.hint == 'yes':
         ch_help(board_colour, board)
     tries = config.num_of_tries
-    print_board(board, pvp, board_colour)
+    print_board(board, pvp, board_colour, shift)
     turn_num = 0
     turn = []
     while read_board(board, White_turn):
@@ -656,7 +675,7 @@ def main():
             print('White turn')
         else:
             print('Black turn')
-        board, board_turn, turn_temp = player_turn(board, White_turn, ru, pvp, board_colour, tries, len(turn), turn_num - 1)
+        board, board_turn, turn_temp = player_turn(board, White_turn, ru, pvp, board_colour, tries, len(turn), turn_num - 1, shift)
         if turn_temp:
             turn[:] = turn[:turn_num - 1]
             turn.append(turn_temp)
@@ -668,10 +687,10 @@ def main():
             break
         elif board_turn == 'undo':
             board, turn_num = board_undo(board, turn, turn_num)
-            print_board(board, pvp, board_colour)
+            print_board(board, pvp, board_colour, shift)
         elif board_turn == 'redo':
             board, turn_num = board_redo(board, turn, turn_num)
-            print_board(board, pvp, board_colour)
+            print_board(board, pvp, board_colour, shift)
         if turn_num % 2 == 1:
             White_turn = False
         else:

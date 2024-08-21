@@ -35,6 +35,7 @@ class Settings(BaseSettings, case_sensitive=True):
     question_test: YesNoEnum = Field(default=YesNoEnum.NO)
     pvp: YesNoEnum = Field(default=YesNoEnum.YES)
     Board_creator: YesNoEnum = Field(default=YesNoEnum.NO)
+    shift: YesNoEnum = Field(default=YesNoEnum.NO)
     Rus_question: YesNoEnum = Field(default=YesNoEnum.YES)
     Rus: YesNoEnum = Field(default=YesNoEnum.YES)
     hint: YesNoEnum = Field(default=YesNoEnum.YES)

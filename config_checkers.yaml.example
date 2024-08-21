@@ -8,6 +8,8 @@ question_test: "no"
 pvp: "yes"
 # ask if user wants to input a board
 Board_creator: "no"
+# shifts the background colours on the board
+shift: "yes"
 # ask if user wants to play rus version
 Rus_question: "yes"
 # if Rus_question == 'no', what version is default
