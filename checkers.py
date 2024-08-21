@@ -85,7 +85,7 @@ def print_board(board, PvP, inv):
 def board_creator(board_colour):
     board_list = []
     temp_list = []
-    pvp = binary_choice('Were you playing PvP?')
+    pvp = binary_choice('Were you playing PvP?', 1)
     board = input('Paste your board:\n')
     col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
     if pvp:
@@ -123,7 +123,7 @@ def board_creator(board_colour):
     if col != board_colour:
         print_board(board_list, pvp, col)
     print_board(board_list, pvp, board_colour)
-    Wh_turn = binary_choice('\nWhose turn was that?\nWhite(y), Black(n)')
+    Wh_turn = binary_choice('\nWhose turn was that?\nWhite(1), Black(0)', 2)
     return(board_list, Wh_turn)
 
 def ch_help(col):
@@ -191,11 +191,17 @@ def ChangeOfTwo(y, x, j):
         output = [y + 2, x - 2]
     return(output)
 
-def binary_choice(message):
-    choice = input(f'{message}\ny/n\n')
-    while choice not in {'y', 'n'}:
-        choice = input(f'{message}\ny/n\n')
-    if choice == 'y':
+def binary_choice(message, choice_type):
+    if choice_type == 1:
+        choice = 'y/n'
+        choice_set = {'y', 'n'}
+    else:
+        choice = '1/0'
+        choice_set = {'1', '0'}
+    choice = input(f'{message}\n{choice}\n')
+    while choice not in choice_set:
+        choice = input(f'{message}\n{choice}\n')
+    if choice == 'y' or choice == '1':
         return(True)
     else:
         return(False)
@@ -571,7 +577,7 @@ def main():
     else:
         board_colour = str(config.board_colour)
     if config.Board_creator == 'yes':
-        new_board = binary_choice('Do you want to paste your own board?')
+        new_board = binary_choice('Do you want to paste your own board?', 1)
     else:
         new_board = False
     if new_board:
@@ -587,14 +593,14 @@ def main():
                  ['_', 'b', '_', 'b', '_', 'b', '_', 'b']]
         White_turn = True
     if config.Rus_question == 'yes':
-        ru = binary_choice('Do you want to play russian checkers?')
+        ru = binary_choice('Do you want to play russian checkers?', 1)
     else:
         if config.Rus == 'yes':
             ru = True
         elif config.Rus == 'no':
             ru = False
     if config.question_test == 'yes':
-        pvp = binary_choice('Do you want to play the game yourself?')
+        pvp = binary_choice('Do you want to play the game yourself?', 1)
     else:
         if config.pvp =='yes':
             pvp = True
