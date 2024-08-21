@@ -129,30 +129,64 @@ def board_creator(board_colour):
 def ch_help(col):
     if col == '1':
         colour = '\033[0m'
+        colour_op = '\033[0m'
         colour_u = '\033[0m'
+        colour_hide = '\033[0m'
         u_wh = 'w'
         u_bl = 'b'
         damk_wh = 'm'
         damk_bl = 'p'
     elif col == '2':
         colour = '\033[0;40m'
+        colour_op = '\033[47;37m'
         colour_u = '\033[0m'
+        colour_hide = '\033[30m'
         u_wh = '●'
         u_bl = '○'
         damk_wh = '◆'
         damk_bl = '◇'
     else:
         colour = '\033[47;30m'
+        colour_op = '\033[40;30m'
         colour_u = '\033[0m'
+        colour_hide = '\033[37m'
         u_wh = '○'
         u_bl = '●'
         damk_wh = '◇'
         damk_bl = '◆'
     print('\nHelp')
-    print(f'usual white - {colour}{u_wh}{colour_u}')
-    print(f'usual black - {colour}{u_bl}{colour_u}')
-    print(f'damka white - {colour}{damk_wh}{colour_u}')
-    print(f'damka black - {colour}{damk_bl}{colour_u}')
+    choice = choice_of_three('Do you want to continue to\ninputs(1), figures(2), exit(3)')
+    while choice != '3':
+        if choice == '1':
+            print('Input:')
+            print('help - for help')
+            print('undo - to go one turn back')
+            print('redo - to go one turn turn forward if ')
+            print('you did not make any new turns')
+            print('surrender - to surrender to the enemy and end the game')
+        elif choice == '2':
+            print('Figures:')
+            print(f'usual white - {colour}{u_wh}{colour_u}')
+            print(f'usual black - {colour}{u_bl}{colour_u}')
+            print(f'dama/king white - {colour}{damk_wh}{colour_u}')
+            print(f'dama/king black - {colour}{damk_bl}{colour_u}')
+            if binary_choice('Do you want to learn about turn patterns?', 1):
+                print('x - marks the possible turns')
+                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u} - usual figures can go diagonally in one')
+                print(f'{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_bl} {colour_op}_ {colour_u}│{colour_op}_ {colour}x {colour_op}_ {colour}{u_wh} {colour_op}_ {colour_u}   direction, and attak by jumping over the')
+                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{u_wh} {colour_op}_ {colour}{colour_hide}0 {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{u_bl} {colour_op}_ {colour}{colour_hide}0 {colour_u}   enemy in all four directions')
+                print(f'{colour_op}_ {colour}x {colour_op}_ {colour}{u_bl} {colour_op}_ {colour_u}│{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_wh} {colour_op}_ {colour_u}   they can move only one space when not attaking')
+                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x ')
+                print()
+                print(f'{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_op}_ {colour_u}│{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_op}_ {colour_u} - dama/king figures can go diagonally in all')
+                print(f'{colour_op}_ {colour}x {colour_op}_ {colour}{u_bl} {colour_op}_ {colour}{colour_hide}0 {colour_u}│{colour_op}_ {colour}x {colour_op}_ {colour}{u_wh} {colour_op}_ {colour}{colour_hide}0 {colour_u}   directions, and attak by jumping over the')
+                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{damk_wh} {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{damk_bl} {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour_u}   enemy in all directions')
+                print(f'{colour_op}_ {colour}x {colour_op}_ {colour}x {colour_op}_ {colour}{colour_hide}0 {colour_u}│{colour_op}_ {colour}x {colour_op}_ {colour}x {colour_op}_ {colour}{colour_hide}0 {colour_u}   the can move as many spaces as there are')
+                print(f'{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_bl} {colour_op}_ {colour_u}│{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_wh} {colour_op}_ {colour_u}   free spaces in diogonal')
+                print(f'{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}│{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}   they can attak any enemy on the diogonal')
+                print(colour_u, end='')
+        choice = choice_of_three('Do you want to continue to\ninputs(1), figures(2), exit(3)')
+    print('Exit')
 
 def board_undo(board, turn, turn_num):
     turn_num -= 2
