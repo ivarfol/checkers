@@ -35,7 +35,7 @@ class Settings(BaseSettings, case_sensitive=True):
     question_test: YesNoEnum = Field(default=YesNoEnum.NO)
     pvp: YesNoEnum = Field(default=YesNoEnum.YES)
     Board_creator: YesNoEnum = Field(default=YesNoEnum.NO)
-    game_type: conint(ge=1, le=3) = Field(default=2)
+    game_type: conint(ge=1, le=2) = Field(default=1)
     shift: YesNoEnum = Field(default=YesNoEnum.NO)
     hint: YesNoEnum = Field(default=YesNoEnum.YES)
     num_of_tries: conint(ge=1, le=10) = Field(default=3)
