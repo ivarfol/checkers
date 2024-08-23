@@ -65,7 +65,7 @@ def print_board(board, PvP, inv, shift, border):
             print(f'\033[0m{numb[j]}')
         print('  a b c d e f g h i j'[:2 * border + 1])
     else:
-        print('\n 0123456789'[:3 + border])
+        print('\n 0123456789'[:2 + border])
         for i in range(border):
             print('0123456789'[:border][i], end='')
             for x in range(border):
