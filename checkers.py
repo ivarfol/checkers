@@ -325,7 +325,7 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, start, Ru, tries, l
         temp = -1
     else:
         temp = 0
-    while not(not turn_Nf(turn[-1], turn_N) or turn[len(start):] == 'surrender' or (turn[len(start):] == 'undo' and turn_number != 0) or (turn[len(start):] == 'redo' and length > turn_number) or (turn[0] in letters and turn[3 + temp] and turn[1] in numbers and turn[4 + temp] in numbers) or (len(turn) == 5 and turn[0] in letters and (turn[3] in letters and turn[1:3] == '10' and turn[4] in numbers) or (turn[2] in letters and turn[1] in numbers and turn[3:5] == '10'))):
+    while not(not turn_Nf(turn[-1], turn_N) or turn[len(start):] == 'surrender' or (turn[len(start):] == 'undo' and turn_number != 0) or (turn[len(start):] == 'redo' and length > turn_number) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers and turn[0] != turn[3 + temp] and turn[1] != turn[4 + temp]) or (len(turn) == 5 and turn[0] in letters and turn[0] != turn[3 + temp] and turn[1] != turn[4 + temp] and (turn[3] in letters and turn[1:3] == '10' and turn[4] in numbers) or (turn[2] in letters and turn[1] in numbers and turn[3:5] == '10'))):
         if turn[len(start):] == 'help':
             ch_help(board_colour, board)
             print_board(board, True, board_colour, shift, border)
@@ -419,62 +419,65 @@ def damka_turn(board, board_turn, colour, colour_t, border, inter):
     attak_list = [[], [], [], []]
     fig_l = [False, False, False, False]
     out = []
-    for i in range(1, border): # assining number of figures on the way of 'damka' figure (figure, whitch got to the opposit end of the board) and describing patterns if movement
-        if board_turn[0] + i == border or board_turn[1] + i == border: # prevents calculations from getting over the 'edge' of the board
-            break
-        if board[board_turn[0] + i][board_turn[1] + i] in fig_set: # top left - bottom right ++
-            fig1 +=  1
-            if board[board_turn[0] + i][board_turn[1] + i] in colour:
-                fig_l[0] = True
-                attak_list[0].append(board[board_turn[0] + i][board_turn[1] + i])
-                attak_list[0].append([board_turn[0] + i, board_turn[1] + i])
-        if board_turn[0] + i == board_turn[2] and board_turn[1] + i == board_turn[3]:
-            straight11 = True
-            break
-
-    for j in range(1, border):
-        if board_turn[0] - j == -1 or board_turn[1] - j == -1:
-            break
-        if board[board_turn[0] - j][board_turn[1] - j] in fig_set: # bottom right - top left --
-            fig0 += 1
-            if board[board_turn[0] - j][board_turn[1] - j] in colour:
-                fig_l[1] = True
-                attak_list[1].append(board[board_turn[0] - j][board_turn[1] - j])
-                attak_list[1].append([board_turn[0] - j, board_turn[1] - j])
-        if board_turn[0] - j == board_turn[2] and board_turn[1] - j == board_turn[3]:
-            straight00 = True
-            break
-
-    for z in range(1, border):
-        if board_turn[0] + z == border or board_turn[1] - z == -1:
-            break
-        if board[board_turn[0] + z][board_turn[1] - z] in fig_set: # top right - bottom left +-
-            fig10 += 1
-            if board[board_turn[0] + z][board_turn[1] - z] in colour:
-                fig_l[2] = True
-                attak_list[2].append(board[board_turn[0] + z][board_turn[1] - z])
-                attak_list[2].append([board_turn[0] + z, board_turn[1] - z])
-        if board_turn[0] + z == board_turn[2] and board_turn[1] - z == board_turn[3]:
-            straight10 = True
-            break
-
-    for k in range(1, border):
-        if board_turn[0] - k == -1 or board_turn[1] + k == border:
-            break
-        if board[board_turn[0] - k][board_turn[1] + k] in fig_set: # bottom left - top right -+
-            fig01 += 1
-            if board[board_turn[0] - k][board_turn[1] + k] in colour:
-                fig_l[3] = True
-                attak_list[3].append(board[board_turn[0] - k][board_turn[1] + k])
-                attak_list[3].append([board_turn[0] - k, board_turn[1] + k])
-        if board_turn[0] - k == board_turn[2] and board_turn[1] + k == board_turn[3]:
-            straight01 = True
-            break
+    if board_turn[0] < board_turn[2]:
+        if board_turn[1] < board_turn[3]:
+            for i in range(1, border): # assining number of figures on the way of 'damka' figure (figure, whitch got to the opposit end of the board) and describing patterns if movement
+                if board_turn[0] + i == border or board_turn[1] + i == border: # prevents calculations from getting over the 'edge' of the board
+                    break
+                if board[board_turn[0] + i][board_turn[1] + i] in fig_set: # top left - bottom right ++
+                    fig1 +=  1
+                    if board[board_turn[0] + i][board_turn[1] + i] in colour:
+                        fig_l[0] = True
+                        attak_list[0].append(board[board_turn[0] + i][board_turn[1] + i])
+                        attak_list[0].append([board_turn[0] + i, board_turn[1] + i])
+                if board_turn[0] + i == board_turn[2] and board_turn[1] + i == board_turn[3]:
+                    straight11 = True
+                    break
+        else:
+            for z in range(1, border):
+                if board_turn[0] + z == border or board_turn[1] - z == -1:
+                    break
+                if board[board_turn[0] + z][board_turn[1] - z] in fig_set: # top right - bottom left +-
+                    fig10 += 1
+                    if board[board_turn[0] + z][board_turn[1] - z] in colour:
+                        fig_l[2] = True
+                        attak_list[2].append(board[board_turn[0] + z][board_turn[1] - z])
+                        attak_list[2].append([board_turn[0] + z, board_turn[1] - z])
+                if board_turn[0] + z == board_turn[2] and board_turn[1] - z == board_turn[3]:
+                    straight10 = True
+                    break
+    else:
+        if board_turn[1] > board_turn[3]:
+            for j in range(1, border):
+                if board_turn[0] - j == -1 or board_turn[1] - j == -1:
+                    break
+                if board[board_turn[0] - j][board_turn[1] - j] in fig_set: # bottom right - top left --
+                    fig0 += 1
+                    if board[board_turn[0] - j][board_turn[1] - j] in colour:
+                        fig_l[1] = True
+                        attak_list[1].append(board[board_turn[0] - j][board_turn[1] - j])
+                        attak_list[1].append([board_turn[0] - j, board_turn[1] - j])
+                if board_turn[0] - j == board_turn[2] and board_turn[1] - j == board_turn[3]:
+                    straight00 = True
+                    break
+        else:
+            for k in range(1, border):
+                if board_turn[0] - k == -1 or board_turn[1] + k == border:
+                    break
+                if board[board_turn[0] - k][board_turn[1] + k] in fig_set: # bottom left - top right -+
+                    fig01 += 1
+                    if board[board_turn[0] - k][board_turn[1] + k] in colour:
+                        fig_l[3] = True
+                        attak_list[3].append(board[board_turn[0] - k][board_turn[1] + k])
+                        attak_list[3].append([board_turn[0] - k, board_turn[1] + k])
+                if board_turn[0] - k == board_turn[2] and board_turn[1] + k == board_turn[3]:
+                    straight01 = True
+                    break
     if board[board_turn[0]][board_turn[1]] == colour_t:
-        damka_straight1 = fig1 == 0 and straight11 == True # getting information from four patterns above
-        damka_straight0 = fig0 == 0 and straight00 == True
-        damka_straight10 = fig10 == 0 and straight10 == True
-        damka_straight01 = fig01 == 0 and straight01 == True
+        damka_straight1 = fig1 == 0 and straight11  # getting information from four patterns above
+        damka_straight0 = fig0 == 0 and straight00
+        damka_straight10 = fig10 == 0 and straight10
+        damka_straight01 = fig01 == 0 and straight01
         damka_straight = damka_straight1 or damka_straight10 or damka_straight0 or damka_straight01
         
         if inter:
@@ -576,7 +579,7 @@ def colour_list(board, turn, border, inter):
     for damka in damka_list:
         for y in range(border):
             for x in range(border):
-                if board[y][x] == '0':
+                if board[y][x] == '0' and abs(damka[0] - y) == abs(damka[1] - x):
                     temp = damka + [y, x]
                     if damka_turn(board, temp, col_enemy, col_damka, border, inter)[5]:
                         list_eats.append(temp)
@@ -600,7 +603,8 @@ def acceptable_jump(board_turn, board, colour, border):
 
 def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number, shift, border, inter): # makes a move, checks if it is valid
     C_l = []
-    C_l_temp = colour_list(board, wh_tur, border, inter)
+    if inter:
+        C_l_temp = colour_list(board, wh_tur, border, inter)
     C_l_jump = colour_list(board, wh_tur, border, False)
     turn = []
     if wh_tur: # white
@@ -608,8 +612,11 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
     else:
         col = ('p', 'b')
     if Ru:
-        if in_list(C_l_jump, board, col, border):
-            C_l = C_l_jump
+        if inter:
+            if in_list(C_l_jump, board, col, border):
+                C_l = C_l_jump
+            else:
+                C_l = C_l_temp
         else:
             C_l = C_l_temp
     board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour, '', Ru, tries, length, turn_number, shift, border)
@@ -682,7 +689,7 @@ def read_board(board, wh_turn, border): # looks for all of the figures on board,
     for figure in c_list:
         for y in range(border):
             for x in range(border):
-                if board[y][x] == '0':
+                if board[y][x] == '0' and abs(figure[0] - y) == abs(figure[1] - x):
                     temp = figure + [y, x]
                     if turn_validation(board, temp, wh_turn, [], False, border, False)[0]:
                         turn_possible = False
