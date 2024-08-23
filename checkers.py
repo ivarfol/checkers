@@ -714,8 +714,7 @@ def read_board(board, wh_turn, border, inter): # looks for all of the figures on
                     else:
                         temp = figure + [y, x]
                         l_temp = damka_turn(board, temp, enemy_set, colour_t, border, inter)
-                        l_temp = l_temp[::len(l_temp)-1]
-                        if l_temp or l_temp:
+                        if l_temp[0] or l_temp[5]:
                             turn_possible = False
                             break
                 
