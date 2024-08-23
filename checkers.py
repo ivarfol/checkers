@@ -618,7 +618,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
             else:
                 C_l = C_l_temp
         else:
-            C_l = C_l_temp
+            C_l = C_l_jump
     board_turn, inv_count = validation(board, wh_tur, PvP, 0, board_colour, '', Ru, tries, length, turn_number, shift, border)
     while board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_tur, C_l, False, border, inter)[0]):
         if PvP:
