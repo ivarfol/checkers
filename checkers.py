@@ -547,8 +547,6 @@ def turn_validation(board, board_turn, wh_t, l_attak, val, border, inter): #prev
 def in_list(list_1, board, colour, border):
     flag = False
     for val in list_1:
-        print(val)
-        print(acceptable_jump(val, board, colour, border))
         if acceptable_jump(val, board, colour, border):
             flag = True
     return(flag)
