@@ -666,7 +666,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
                 print_board(board, PvP, board_colour, shift, border)
                 if not PvP:
                     print(*board_turn)
-        if board_turn[2] == border -1 and wh_tur:
+        if board_turn[2] == border -1 and wh_tur and board[board_turn[2]][board_turn[3]] == col[1]:
             board[board_turn[2]][board_turn[3]] = 'm'
             print_board(board, PvP, board_colour, shift, border)
         elif board_turn[2] == 0 and not wh_tur:
