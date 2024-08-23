@@ -404,6 +404,13 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message, t
         turn = RndInput2(message, PvP, border)
     return(turn, inv_count)
 
+def usual_straight(wh_t, board_turn):
+    if wh_t:
+        temp_first = board_turn[0] + 1
+    else:
+        temp_first = board_turn[0] - 1
+    return(temp_first == board_turn[2] and board_turn[1] + 1 == board_turn[3]) or (temp_first == board_turn[2] and board_turn[1] - 1 == board_turn[3])
+
 def usual_attaks(board, board_turn, colour):
     down_right = (board_turn[0] + 2 == board_turn[2] and board_turn[1] + 2 == board_turn[3]) and board[board_turn[0] + 1][board_turn[1] + 1] in colour # describes, when usual figure tries to eat ++
     down_left = (board_turn[0] + 2 == board_turn[2] and board_turn[1] - 2 == board_turn[3]) and board[board_turn[0] + 1][board_turn[1] - 1] in colour # +-
@@ -507,16 +514,14 @@ def turn_validation(board, board_turn, wh_t, l_attak, val, border, inter): #prev
     if wh_t:
         colour = {'p','b'}
         colour_t = 'm'
-        temp_first = board_turn[0] + 1
         damka_border = border - 1
     else:
         colour = {'m', 'w'}
         colour_t = 'p'
-        temp_first = board_turn[0] - 1
         damka_border = 0
     attak = True
     turn = []
-    usual_sraight = (temp_first == board_turn[2] and board_turn[1] + 1 == board_turn[3]) or (temp_first == board_turn[2] and board_turn[1] - 1 == board_turn[3]) # describes 'straight' movement on board
+    usual_sraight = usual_straight(wh_t, board_turn) # describes 'straight' movement on board
     down_right, down_left, up_right, up_left, usual_eats = usual_attaks(board, board_turn, colour)
     damka_straight, damka_eats1, damka_eats0, damka_eats10, damka_eats01, damka_eats, damka_attak = damka_turn(board, board_turn, colour, colour_t, border, inter)
     if l_attak != []:
@@ -674,14 +679,19 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
             print_board(board, PvP, board_colour, shift, border)
     return(board, board_turn, turn)
 
-def read_board(board, wh_turn, border): # looks for all of the figures on board, counts them stops the game (while loop) if there are no more figures on one side
+def read_board(board, wh_turn, border, inter): # looks for all of the figures on board, counts them stops the game (while loop) if there are no more figures on one side
     flag = True
     c_list = []
     turn_possible = True
+    u_set = {'w', 'b'}
     if wh_turn:
         c_set = {'w', 'm'}
+        enemy_set = {'b', 'p'}
+        colour_t = 'm'
     else:
         c_set = {'b', 'p'}
+        enemy_set = {'w', 'm'}
+        colour_t = 'p'
     for y in range(border):
         for x in range(border):
             if board[y][x] in c_set:
@@ -690,10 +700,25 @@ def read_board(board, wh_turn, border): # looks for all of the figures on board,
         for y in range(border):
             for x in range(border):
                 if board[y][x] == '0' and abs(figure[0] - y) == abs(figure[1] - x):
-                    temp = figure + [y, x]
-                    if turn_validation(board, temp, wh_turn, [], False, border, False)[0]:
-                        turn_possible = False
-                        break
+                    if board[figure[0]][figure[1]] in u_set:
+                        if abs(figure[0] - y) == 1:
+                            temp = figure + [y, x]
+                            if usual_straight(wh_turn, temp):
+                                turn_possible = False
+                                break
+                        elif abs(figure[0] - y) == 2:
+                            temp = figure + [y, x]
+                            if usual_attaks(board, temp, enemy_set)[4]:
+                                turn_possible = False
+                                break
+                    else:
+                        temp = figure + [y, x]
+                        l_temp = damka_turn(board, temp, enemy_set, colour_t, border, inter)
+                        l_temp = l_temp[::len(l_temp)-1]
+                        if l_temp or l_temp:
+                            turn_possible = False
+                            break
+                
             if not turn_possible:
                 break
         if not turn_possible:
@@ -774,7 +799,7 @@ def main():
     print_board(board, pvp, board_colour, shift, border)
     turn_num = 0
     turn = []
-    while read_board(board, White_turn, border):
+    while read_board(board, White_turn, border, inter):
         turn_num += 1
         print(f'\nTurn {turn_num}')
         if White_turn:
