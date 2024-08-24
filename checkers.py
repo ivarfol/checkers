@@ -33,7 +33,7 @@ def print_board(board, PvP, inv, shift, border):
         damk_w = 'm'
         usual_b = 'b'
         damk_b = 'p'
-    if PvP:
+    if True:
         print('\n  a b c d e f g h i j'[:2 * border + 3])
         for j in range(border):
             if numb[j] != '10':
@@ -261,6 +261,12 @@ def choice_of_three(message):
         out = input(f'{message}\nInvalid imput\nTry again\n(1/2/3)\n')
     return(out)
 
+def choice_of_four(message):
+    out = input(f'{message}\n(0/1/2/3)\n')
+    while not out in {'0', '1', '2', '3', }:
+        out = input(f'{message}\nInvalid imput\nTry again\n(1/2/3)\n')
+    return(int(out))
+
 def turn_Nf(turn, turn_N):
     if turn_N:
         return(turn != turn_N)
@@ -403,6 +409,18 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour, inp_type, message, t
     else:
         turn = RndInput2(message, PvP, border)
     return(turn, inv_count)
+
+def convert(turn):
+    letters = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j')
+    numbers = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+    temp = ''
+    for i in range(4):
+        if i == 1 or i == 3:
+            temp += letters[turn[i]]
+        else:
+            temp += numbers[turn[i]]
+    out = temp[1] + temp[0] + temp[3] + temp[2]
+    return(out)
 
 def usual_straight(wh_t, board_turn):
     if wh_t:
@@ -642,7 +660,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
         board[board_turn[0]][board_turn[1]] = '0'
         print_board(board, PvP, board_colour, shift, border)
         if not(PvP):
-            print(*board_turn)
+            print(convert(board_turn))
         if board_turn in C_l_jump:
             acceptable = acceptable_jump(board_turn, board, col, border)
             while acceptable:
@@ -670,7 +688,7 @@ def player_turn(board, wh_tur, Ru, PvP, board_colour, tries, length, turn_number
                 acceptable = acceptable_jump(board_turn, board, col, border)
                 print_board(board, PvP, board_colour, shift, border)
                 if not PvP:
-                    print(*board_turn)
+                    print(convert(board_turn))
         if board_turn[2] == border -1 and wh_tur and board[board_turn[2]][board_turn[3]] == col[1]:
             board[board_turn[2]][board_turn[3]] = 'm'
             print_board(board, PvP, board_colour, shift, border)
@@ -794,6 +812,11 @@ def main():
             pvp = False
     if config.hint == 'yes':
         ch_help(board_colour, board)
+    pve = choice_of_four('What combination do yo want to play')
+    if pve == 0 or pve == 1:
+        pvp = True
+    elif pve == 2 or pve == 3:
+        pvp = False
     tries = config.num_of_tries
     print_board(board, pvp, board_colour, shift, border)
     turn_num = 0
@@ -823,8 +846,16 @@ def main():
             print_board(board, pvp, board_colour, shift, border)
         if turn_num % 2 == 1:
             White_turn = False
+            if pve == 1:
+                pvp = False
+            elif pve == 2:
+                pvp = True
         else:
             White_turn = True
+            if pve == 1:
+                pvp = True
+            elif pve == 2:
+                pvp = False
 
 if __name__ == '__main__':
     main()
