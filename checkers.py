@@ -67,14 +67,25 @@ def print_board(board, inv, shift, border):
 def board_creator(board_colour):
     board_list = []
     temp_list = []
-    if binary_choice('Were you playing russian(1) or international(0) checkers?', 2):
-        border = 8
-    else:
-        border = 10
     board = input('Paste your board:\n')
-    shift = binary_choice('Is it shifted (a1 is not used)?', 1)
+    if len(board) == 284 or len(board) == 271:
+        border = 10
+    else:
+        border = 8
     col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
-    board = board[border * 2 + 4:- border * 2 - 4]
+    len_temp = len(board)
+    if len_temp == 271:
+        board = board[21:- 22]
+    elif len_temp == 284:
+        board = board[24:- 24]
+    elif len_temp == 185:
+        board = board[18:- 18]
+    elif len_temp == 196:
+        board = board[21:- 18]
+    if board[0] == '_':
+        shift = True
+    else:
+        shift = False
     if border == 10:
         board = board[:-20] + ' ' + board[-20:]
     board = board.split(' ')
@@ -750,7 +761,7 @@ def main():
                          ['b', '_', 'b', '_', 'b', '_', 'b', '_'],
                          ['_', 'b', '_', 'b', '_', 'b', '_', 'b'],
                          ['b', '_', 'b', '_', 'b', '_', 'b', '_']]
-            shift = True
+                shift = True
         White_turn = True
     if config.hint == 'yes':
         ch_help(board_colour, board)
