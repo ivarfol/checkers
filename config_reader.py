@@ -33,7 +33,7 @@ class Settings(BaseSettings, case_sensitive=True):
     board_colour_ask: YesNoEnum = Field(default=YesNoEnum.NO)
     board_colour: conint(ge=1, le=3) = Field(default=2)
     question_test: YesNoEnum = Field(default=YesNoEnum.NO)
-    pvp: YesNoEnum = Field(default=YesNoEnum.YES)
+    pve: conint(ge=0, le=3) = Field(default=0)
     Board_creator: YesNoEnum = Field(default=YesNoEnum.NO)
     game_type: conint(ge=1, le=2) = Field(default=1)
     shift: YesNoEnum = Field(default=YesNoEnum.NO)

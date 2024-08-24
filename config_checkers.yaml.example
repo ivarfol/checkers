@@ -3,13 +3,13 @@ board_colour_ask: "no"
 # if board_colour_ask == 'no' what version is default
 board_colour: 2
 # ask if user wants to play pvp or test
-question_test: "no"
+question_test: "yes"
 # if question_test == 'no', what version is default
-pvp: "yes"
+pve: 0
 # ask if user wants to input a board
 Board_creator: "no"
 #american, russian, international
-game_type: 1
+game_type: 2
 # shifts the background colours on the board
 shift: "yes"
 # print help at the start of the game
