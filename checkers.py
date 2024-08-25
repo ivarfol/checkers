@@ -72,7 +72,6 @@ def board_creator(board_colour):
         border = 10
     else:
         border = 8
-    col = choice_of_three("What board type do you want to use?\n(if you didn't change anithing choose 2")
     len_temp = len(board)
     if len_temp == 271:
         board = board[21:- 22]
@@ -88,6 +87,10 @@ def board_creator(board_colour):
         shift = False
     if border == 10:
         board = board[:-20] + ' ' + board[-20:]
+    if ('w' in board) or ('b' in board) or ('m' in board) or ('p' in board):
+        col = '1'
+    else:
+        col = choice_of_two("What board type did you use?\n(if the figures are white on black\nsquares choose 1, otherwise choose 2)")
     board = board.split(' ')
     for i in range(0, border**2, border):
         temp_list = board[i + int(i / border):i + int(i / border) + border]
@@ -115,7 +118,7 @@ def board_creator(board_colour):
         print_board(board_list, col, shift, border)
     print_board(board_list, board_colour, shift, border)
     Wh_turn = binary_choice('\nWhose turn was that?\nWhite(1), Black(0)', 2)
-    return(board_list, Wh_turn, border)
+    return(board_list, Wh_turn, border, shift)
 
 def board_p(a, b, shift):
     if shift:
@@ -241,6 +244,12 @@ def binary_choice(message, choice_type):
         return(True)
     else:
         return(False)
+
+def choice_of_two(message):
+    choice = input(f'{message}\n1/0\n')
+    while choice not in {'1', '2'}:
+        choice = input(f'{message}\n1/0\n')
+    return(str(int(choice) + 1))
 
 def choice_of_three(message):
     out = input(f'{message}\n(1/2/3)\n')
@@ -710,6 +719,7 @@ def read_board(board, wh_turn, border, inter): # looks for all of the figures on
     return(flag)
 
 def main():
+    ru = True
     config = get_settings()
     if config.board_colour_ask == 'yes':
         board_colour = choice_of_three('What board type do you want to use?')
@@ -720,10 +730,13 @@ def main():
     else:
         new_board = False
     if new_board:
-        board, White_turn, border = board_creator(board_colour)
+        board, White_turn, border, shift = board_creator(board_colour)
+        if border == 10:
+            inter = True
+        else:
+            inter = False
     else:
         if config.game_type == 2:
-            ru = True
             inter = True
             border = 10
             board = [['_', 'w', '_', 'w', '_', 'w', '_', 'w', '_', 'w'],
@@ -740,7 +753,6 @@ def main():
                 
         else:
             border = 8
-            ru = True
             inter = False
             if config.shift == 'no':
                 board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
