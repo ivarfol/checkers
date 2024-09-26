@@ -36,6 +36,7 @@ def print_board(board, board_colour, shift, border):
         colour_op = '\033[40m'
         colour_hide = '\033[37m'
         colour_zero = '\033[30m'
+        reset = '\033[0m'
         usual_w = '\u25CF'
         king_w = '\u25C6'
         usual_b = '\u25CB'
@@ -45,15 +46,17 @@ def print_board(board, board_colour, shift, border):
         colour_op = '\033[47m'
         colour_hide = '\033[30m'
         colour_zero = '\033[37m'
+        reset = '\033[0m'
         usual_w = '\u25CB'
         king_w = '\u25C7'
         usual_b = '\u25CF'
         king_b = '\u25C6'
     elif board_colour == '1':
-        colour = '\033[0m'
-        colour_op = '\033[0m'
-        colour_hide = '\033[0m'
-        colour_zero = '\033[0m'
+        colour = ''
+        colour_op = ''
+        colour_hide = ''
+        colour_zero = ''
+        reset = ''
         usual_w = 'w'
         king_w = 'm'
         usual_b = 'b'
@@ -85,8 +88,8 @@ def print_board(board, board_colour, shift, border):
                 print(king_b, end=' ')
             else:
                 print(' '.join(board[j][x]), end=' ')
-            print('\033[0m', end='')
-        print(f'\033[0m{numb[j]}')
+            print(reset, end='')
+        print(f'{reset}{numb[j]}')
     print('  a b c d e f g h i j'[:2 * border + 1])
     print('white')
     temp_w = gen_turn_list(board, True, border, False)[0]
@@ -222,10 +225,10 @@ def ch_help(board_colour):
 
     '''
     if board_colour == '1':
-        colour = '\033[0m'
-        colour_op = '\033[0m'
-        colour_u = '\033[0m'
-        colour_hide = '\033[0m'
+        colour = ''
+        colour_op = ''
+        colour_u = ''
+        colour_hide = ''
         u_wh = 'w'
         u_bl = 'b'
         king_wh = 'm'
@@ -1369,7 +1372,6 @@ def gen_turn_list(board, wh_turn, border, international):
     list of lists with all possible turns for a colour
 
     '''
-    print(wh_turn)
     c_list = []
     u_set = {'w', 'b'}
     attak_u = []
@@ -1392,7 +1394,6 @@ def gen_turn_list(board, wh_turn, border, international):
         for y in range(border):
             for x in range(border):
                 if board[y][x] == '0' and abs(figure[0] - y) == abs(figure[1] - x):
-                    #print(abs(figure[0] - y) == abs(figure[1] - x))
                     if board[figure[0]][figure[1]] in u_set:
                         if abs(figure[0] - y) == 1:
                             temp = figure + [y, x]
