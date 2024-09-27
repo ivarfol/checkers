@@ -1510,7 +1510,10 @@ def main():
             turns.append(turn_temp)
             turn_flag = True
             for trn in range(len(turns) - 1, len(turns) - 21, -1):
-                if turns[trn][0][0] in {'w', 'b'}:
+                if turn_num < 20:
+                    turn_flag = False
+                    break
+                elif turns[trn][0][0] in {'w', 'b'}:
                     turn_flag = False
                     break
             if turn_flag:
