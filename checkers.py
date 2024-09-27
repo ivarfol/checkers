@@ -507,12 +507,12 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, jumps, Ru, tries, l
     turn_N = False
     if not jumps or Ru:
         turn = input('\nxy:xy\n')
-        temp_m = 'invalid input format\ntry again:\n\nxy:xy\n'
+        temp_m = 'invalid input format\ntry again:\n\nxyxy\n'
     else:
         turn = input('\nxy:xy/N\n')
         turn_N = 'N'
-        temp_m = 'invalid input format\ntry again:\n\nxy:xy/N\n'
-    while len(turn) not in {4, 5} and (len(turn) != 1 or turn[-1] != turn_N) and (not len(turn) == 9 or turn != 'surrender'): # prevents errors if user doesent input anithing
+        temp_m = 'invalid input format\ntry again:\n\nxyxy/N\n'
+    while len(turn) not in {4, 5} and (len(turn) != 1 or turn[-1] != turn_N) and (len(turn) != 9 or turn != 'surrender') and (len(turn) != 3 or turn != 'tie'): # prevents errors if user doesent input anithing
         turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, temp_m, tries, shift, border)
         if turn == 'help':
             ch_help(board_colour)
@@ -522,14 +522,18 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, jumps, Ru, tries, l
         temp = -1
     else:
         temp = 0
-    while not(turn[-1] == turn_N or turn == 'surrender' or (turn == 'undo' and turn_number != 0) or (turn == 'redo' and length > turn_number) or (turn[0] in letters and turn[3 + temp] in letters and turn[1] in numbers and turn[4 + temp] in numbers and turn[0] != turn[3 + temp] and turn[1] != turn[4 + temp]) or (len(turn) == 5 and turn[0] in letters and turn[0] != turn[3 + temp] and turn[1] != turn[4 + temp] and (turn[3] in letters and turn[1:3] == '10' and turn[4] in numbers) or (turn[2] in letters and turn[1] in numbers and turn[3:5] == '10'))):
+    while not(turn[-1] == turn_N or turn == 'surrender' or (turn == 'undo' and turn_number != 0) or (turn == 'redo' and length > turn_number) or  turn == 'True' or(len(turn) == 4 and turn[0] in letters and turn[2] in letters and turn[1] in numbers and turn[3] in numbers and turn[0] != turn[2] and turn[1] != turn[3]) or (len(turn) == 5 and turn[0] in letters and turn[0] != turn[3] and turn[1] != turn[4] and (turn[3] in letters and turn[1:3] == '10' and turn[4] in numbers) or (turn[2] in letters and turn[1] in numbers and turn[3:5] == '10'))):
         if turn == 'help':
             ch_help(board_colour)
             print_board(board, board_colour, shift, border)
             turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, temp_m[32:], tries, shift, border)
+        elif turn == 'tie':
+            turn = str(binary_choice('Do you accept?'))
+            if turn == 'False':
+                turn, inv_count = inv_input(0, board, PvP, wh_turn, board_colour, temp_m[32:], tries, shift, border)
         else:
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, temp_m, tries, shift, border)
-        while len(turn) not in {4, 5} and (len(turn) != 1 or turn[-1] != turn_N) and (not len(turn) == 9 or turn != 'surrender'): # prevents errors if user doesent input anithing
+        while len(turn) not in {4, 5} and (len(turn) != 1 or turn[-1] != turn_N) and (len(turn) != 9 or turn != 'surrender') and (len(turn) != 3 or turn != 'tie') and turn != 'True': # prevents errors if user doesent input anithing
             turn, inv_count = inv_input(inv_count, board, PvP, wh_turn, board_colour, temp_m, tries, shift, border)
             if turn == 'help':
                 ch_help(board_colour)
@@ -547,6 +551,8 @@ def validation(board, wh_turn, PvP, inv_count, board_colour, jumps, Ru, tries, l
         board_turn = 'undo'
     elif turn == 'redo':
         board_turn = 'redo'
+    elif turn == 'True':
+        board_turn = 'True'
     else:
         turn_t = turn
         turn = []
@@ -1094,7 +1100,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
         else:
             C_l = C_l_jump
     board_turn, inv_count = validation(board, wh_turn, PvP, 0, board_colour, False, Ru, tries, length, turn_number, shift, border)
-    while board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_turn, C_l, False, border, international)):
+    while board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and board_turn != 'True' and not(board[board_turn[0]][board_turn[1]] in col and board[board_turn[2]][board_turn[3]] == '0' and turn_validation(board, board_turn, wh_turn, C_l, False, border, international)):
         if PvP:
             inv_count += 1
             if inv_count == tries:
@@ -1106,7 +1112,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
                 inv_count = 0
             print('invalid turn\ntry again:')
         board_turn, inv_count = validation(board, wh_turn, PvP, inv_count, board_colour, False, Ru, tries, length, turn_number, shift, border)
-    if board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo':
+    if board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and board_turn != 'True':
         turn = val_turn(board, board_turn, international, wh_turn, border)
         board[board_turn[0]][board_turn[1]] = '0'
         print_board(board, board_colour, shift, border)
@@ -1117,7 +1123,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
             while acceptable:
                 temp = [board_turn[2], board_turn[3]]
                 board_turn, inv_count = validation(board, wh_turn, PvP, inv_count, board_colour, True, Ru, tries, length, turn_number, shift, border)
-                while board_turn != 'N' and board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and (board_turn[:2] != temp or board_turn[2:] not in acceptable):
+                while board_turn != 'N' and board_turn != 'surrender' and board_turn != 'undo' and board_turn != 'redo' and board_turn != 'True' and (board_turn[:2] != temp or board_turn[2:] not in acceptable):
                     if PvP:
                         inv_count += 1
                         if inv_count == tries:
@@ -1132,7 +1138,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
                 if board_turn == 'N':
                     print_board(board, board_colour, shift, border)
                     break
-                elif board_turn == 'surrender' or board_turn == 'undo' or board_turn == 'redo':
+                elif board_turn == 'surrender' or board_turn == 'undo' or board_turn == 'redo' or board_turn == 'True':
                     break
                 turn.extend(val_turn(board, board_turn, international, wh_turn, border))
                 board[board_turn[0]][board_turn[1]] = '0'
@@ -1477,7 +1483,7 @@ def main():
     if config.hint == 'yes':
         ch_help(board_colour)
     if config.question_test == 'yes':
-        pve = choice_of_four('What combination do yo want to play')
+        pve = choice_of_four('What combination do you want to play?')
     else:
         pve = config.pve
     if pve == 0 or pve == 1:
@@ -1502,17 +1508,34 @@ def main():
         if turn_temp:
             turns[:] = turns[:turn_num - 1]
             turns.append(turn_temp)
+            turn_flag = True
+            for trn in range(len(turns) - 1, len(turns) - 21, -1):
+                if turns[trn][0][0] in {'w', 'b'}:
+                    turn_flag = False
+                    break
+            if turn_flag:
+                print('Tie')
+                break
         if board_turn == 'surrender':
             if White_turn:
                 print('\nBlacks win')
             else:
                 print('\nWhites win')
             break
+        elif board_turn == 'True':
+            print('\nTie accepted')
+            break
         elif board_turn == 'undo':
             board, turn_num = board_undo(board, turns, turn_num)
+            if (pve == 2 and turn_num > 1) or (pve == 1 and turn_num > 0):
+                turn_num += 1
+                board, turn_num = board_undo(board, turns, turn_num)
             print_board(board, board_colour, shift, border)
         elif board_turn == 'redo':
             board, turn_num = board_redo(board, turns, turn_num, international, border)
+            if pve != 0:
+                turn_num += 1
+                board, turn_num = board_redo(board, turns, turn_num, international, border)
             print_board(board, board_colour, shift, border)
         if turn_num % 2 == 1:
             White_turn = False
