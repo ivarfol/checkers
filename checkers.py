@@ -91,15 +91,6 @@ def print_board(board, board_colour, shift, border):
             print(reset, end='')
         print(f'{reset}{numb[j]}')
     print('  a b c d e f g h i j'[:2 * border + 1])
-    print('white')
-    temp_w = gen_turn_list(board, True, border, False)[0]
-    for cdnt in temp_w:
-        print(convert(cdnt), end=' ')
-    print('\nblack')
-    temp_b = gen_turn_list(board, False, border, False)[0]
-    for cdnt in temp_b:
-        print(convert(cdnt), end=' ')
-    print()
       
 def board_p(a, b, shift):
     '''
@@ -1196,19 +1187,19 @@ def computer_turn(board, wh_turn, international, board_colour, shift, border):
         col = 'w'
     else:
         col = 'b'
-    temp = gen_turn_list(board, wh_turn, border, False)
+    temp = gen_turn_list(board, wh_turn, border, False, False)
     board_turn = temp[0][randint(0, len(temp[0]) - 1)]
     turn = val_turn(board, board_turn, international, wh_turn, border)
     print(convert(board_turn))
     print_board(board, board_colour, shift, border)
     if temp[1]:
-        temp = gen_turn_list(board, wh_turn, border, False)
-    while temp[1]:
+        temp = gen_turn_list(board, wh_turn, border, False, board_turn[-2:])
+    while temp[1] and temp[0]:
         board_turn = temp[0][randint(0, len(temp[0]) - 1)]
         turn = val_turn(board, board_turn, international, wh_turn, border)
         print(convert(board_turn))
         print_board(board, board_colour, shift, border)
-        temp = gen_turn_list(board, wh_turn, border, False)
+        temp = gen_turn_list(board, wh_turn, border, False, board_turn[-2:])
     if international:
         if board_turn[2] == border -1 and wh_turn and board[board_turn[2]][board_turn[3]] == col:
             board[board_turn[2]][board_turn[3]] = 'm'
@@ -1355,7 +1346,29 @@ def read_board(board, wh_turn, border, international):
             print('\nWhites win')
     return(flag)
 
-def gen_turn_list(board, wh_turn, border, international):
+def fig_possible(attak_u, attak_k, straight_u, straight_k, border, board, international, u_set, wh_turn, enemy_set, colour_t, figure):
+    for y in range(border):
+        for x in range(border):
+            if board[y][x] == '0' and abs(figure[0] - y) == abs(figure[1] - x):
+                if board[figure[0]][figure[1]] in u_set:
+                    if abs(figure[0] - y) == 1:
+                        temp = figure + [y, x]
+                        if usual_straight(wh_turn, temp):
+                            straight_u.append(temp)
+                    elif abs(figure[0] - y) == 2:
+                        temp = figure + [y, x]
+                        if usual_attaks(board, temp, enemy_set):
+                            attak_u.append(temp)
+                else:
+                    temp = figure + [y, x]
+                    l_temp = king_turn(board, temp, enemy_set, colour_t, border, international)
+                    if l_temp[0]:
+                        straight_k.append(temp)
+                    elif l_temp[1]:
+                        attak_k.append(temp)
+    return(attak_u, attak_k, straight_u, straight_k)
+
+def gen_turn_list(board, wh_turn, border, international, start):
     '''
     
 
@@ -1378,12 +1391,11 @@ def gen_turn_list(board, wh_turn, border, international):
     list of lists with all possible turns for a colour
 
     '''
-    c_list = []
-    u_set = {'w', 'b'}
     attak_u = []
     attak_k = []
     straight_u = []
     straight_k = []
+    u_set = {'w', 'b'}
     if wh_turn:
         c_set = {'w', 'm'}
         enemy_set = {'b', 'p'}
@@ -1392,30 +1404,14 @@ def gen_turn_list(board, wh_turn, border, international):
         c_set = {'b', 'p'}
         enemy_set = {'w', 'm'}
         colour_t = 'p'
-    for y in range(border):
-        for x in range(border):
-            if board[y][x] in c_set:
-                c_list.append([y, x])
-    for figure in c_list:
+    if not start:
         for y in range(border):
             for x in range(border):
-                if board[y][x] == '0' and abs(figure[0] - y) == abs(figure[1] - x):
-                    if board[figure[0]][figure[1]] in u_set:
-                        if abs(figure[0] - y) == 1:
-                            temp = figure + [y, x]
-                            if usual_straight(wh_turn, temp):
-                                straight_u.append(temp)
-                        elif abs(figure[0] - y) == 2:
-                            temp = figure + [y, x]
-                            if usual_attaks(board, temp, enemy_set):
-                                attak_u.append(temp)
-                    else:
-                        temp = figure + [y, x]
-                        l_temp = king_turn(board, temp, enemy_set, colour_t, border, international)
-                        if l_temp[0]:
-                            straight_k.append(temp)
-                        elif l_temp[1]:
-                            attak_k.append(temp)
+                if board[y][x] in c_set:
+                    attak_u, attak_k, straight_u, straight_k = fig_possible(attak_u, attak_k, straight_u, straight_k, border, board, international, u_set, wh_turn, enemy_set, colour_t, [y, x])
+    else:
+        attak_u, attak_k, straight_u, straight_k = fig_possible(attak_u, attak_k, straight_u, straight_k, border, board, international, u_set, wh_turn, enemy_set, colour_t, start)
+        return(attak_u + attak_k, True)
     if attak_u or attak_k:
         temp_final = attak_u + attak_k
         return(temp_final, True)
