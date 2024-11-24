@@ -91,7 +91,7 @@ def print_board(board, board_colour, shift, border):
             print(reset, end='')
         print(f'{reset}{numb[j]}')
     print('  a b c d e f g h i j'[:2 * border + 1])
-      
+
 def board_p(a, b, shift):
     '''
     responsible for "shifting" the background
@@ -117,7 +117,7 @@ def board_p(a, b, shift):
         return(a % 2 != b % 2)
     else:
         return(a % 2 == b % 2)
-    
+
 def board_creator(board_colour):
     '''
     creates a list that will be used as the board
