@@ -1,9 +1,3 @@
-'''
-Program for testing the russian checkers
-'''
-from random import randint
-from config_reader import get_settings
-
 def print_board(board, board_colour, shift, border):
     '''
     print_board
@@ -1420,6 +1414,7 @@ def gen_turn_list(board, wh_turn, border, international, start):
         return(temp_final, False)
 
 def main():
+    from config_reader import get_settings
     Ru = True
     config = get_settings()
     if config.board_colour_ask == 'yes':
@@ -1486,6 +1481,8 @@ def main():
         PvP = True
     elif pve == 2 or pve == 3:
         PvP = False
+    if pve != 0:
+        from random import randint
     tries = config.num_of_tries
     print_board(board, board_colour, shift, border)
     turn_num = 0
