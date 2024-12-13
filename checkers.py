@@ -1,4 +1,5 @@
 from platform import system
+from platform import release
 from random import randint
 def print_board(board, board_colour, shift, border):
     '''
@@ -1477,7 +1478,7 @@ def main():
         board_colour = choice_of_three('What board type do you want to use?')
     else:
         board_colour = str(board_colour)
-    if board_colour != "1" and system() == "Windows":
+    if board_colour != "1" and system() == "Windows" and release() == "10":
         from colorama import init
         init()
     if Board_creator == 'yes':
