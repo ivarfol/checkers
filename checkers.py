@@ -1,3 +1,4 @@
+from platform import system
 from random import randint
 def print_board(board, board_colour, shift, border):
     '''
@@ -1461,7 +1462,7 @@ def main():
     # ask if user wants to play pvp or test
     question_test= "no"
     # if question_test == 'no', what version is default
-    pve= 3
+    pve= 1
     # ask if user wants to input a board
     Board_creator= "no"
     #american, russian, international
@@ -1476,7 +1477,7 @@ def main():
         board_colour = choice_of_three('What board type do you want to use?')
     else:
         board_colour = str(board_colour)
-    if board_colour != "1":
+    if board_colour != "1" and system() == "Windows":
         from colorama import init
         init()
     if Board_creator == 'yes':
