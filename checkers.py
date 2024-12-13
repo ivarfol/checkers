@@ -641,9 +641,9 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour, message, tries, shif
 
     Returns
     -------
-   turn : str
+    turn : str
        the coordinates
-   inv_count : int
+    inv_count : int
        current number of invalid tryes
 
     '''
@@ -748,7 +748,7 @@ def king_turn(board, board_turn, colour, colour_t, border, international):
     board : list
         list of lists of strings of length 1
         stores the current state of the board
-   board_turn : list
+    board_turn : list
        list of integers
        coordinates from the  "player_turn" function
     colour : set
