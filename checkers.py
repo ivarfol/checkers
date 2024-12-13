@@ -1,3 +1,4 @@
+from random import randint
 def print_board(board, board_colour, shift, border):
     '''
     print_board
@@ -1481,8 +1482,6 @@ def main():
         PvP = True
     elif pve == 2 or pve == 3:
         PvP = False
-    if pve != 0:
-        from random import randint
     tries = config.num_of_tries
     print_board(board, board_colour, shift, border)
     turn_num = 0
