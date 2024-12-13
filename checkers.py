@@ -1,10 +1,11 @@
+from random import randint
 def print_board(board, board_colour, shift, border):
     '''
     print_board
     can output the board in different colours or without them
     can "shift" the colours of the background
     can output either 8x8 or 10x10 board
-    
+
     Parameters
     ----------
     board : list
@@ -18,7 +19,7 @@ def print_board(board, board_colour, shift, border):
     border : int
         8 or 10
         corresponds to the size of the board
-    
+
     Returns
     -------
     None.
@@ -55,6 +56,26 @@ def print_board(board, board_colour, shift, border):
         king_w = 'm'
         usual_b = 'b'
         king_b = 'p'
+    elif board_colour == '4':
+        colour = '\033[47m'
+        colour_op = '\033[40m'
+        colour_hide = '\033[37m'
+        colour_zero = '\033[30m'
+        reset = '\033[0m'
+        usual_w = 'w'
+        king_w = 'm'
+        usual_b = 'b'
+        king_b = 'p'
+    elif board_colour == '5':
+        colour = '\033[40m'
+        colour_op = '\033[47m'
+        colour_hide = '\033[30m'
+        colour_zero = '\033[37m'
+        reset = '\033[0m'
+        usual_w = 'w'
+        king_w = 'm'
+        usual_b = 'b'
+        king_b = 'p'
     print('\n  a b c d e f g h i j'[:2 * border + 3])
     for j in range(border):
         if numb[j] != '10':
@@ -70,7 +91,7 @@ def print_board(board, board_colour, shift, border):
                 print(colour_hide, end='')
             elif board[j][x] == '0':
                 print(colour_zero, end='')
-            elif board_colour == '3':
+            elif board_colour == '3' or board_colour == '5':
                 print(colour_hide, end='')
             if board[j][x] == 'w':
                 print(usual_w, end=' ')
@@ -227,7 +248,7 @@ def ch_help(board_colour):
         u_bl = '○'
         king_wh = '◆'
         king_bl = '◇'
-    else:
+    elif board_colour == '3':
         colour = '\033[47;30m'
         colour_op = '\033[40;30m'
         colour_u = '\033[0m'
@@ -236,6 +257,24 @@ def ch_help(board_colour):
         u_bl = '●'
         king_wh = '◇'
         king_bl = '◆'
+    elif board_colour == '4':
+        colour = '\033[0;40m'
+        colour_op = '\033[47;37m'
+        colour_u = '\033[0m'
+        colour_hide = '\033[30m'
+        u_wh = 'w'
+        u_bl = 'b'
+        king_wh = 'm'
+        king_bl = 'p'
+    elif board_colour == '5':
+        colour = '\033[47;30m'
+        colour_op = '\033[40;30m'
+        colour_u = '\033[0m'
+        colour_hide = '\033[37m'
+        u_wh = 'w'
+        u_bl = 'b'
+        king_wh = 'm'
+        king_bl = 'p'
     print('\nHelp')
     choice = choice_of_three('Do you want to continue to\ninputs(1), figures(2), exit help(3)')
     while choice != '3':
@@ -258,7 +297,7 @@ def ch_help(board_colour):
                 print(f'{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_bl} {colour_op}_ {colour_u}│{colour_op}_ {colour}x {colour_op}_ {colour}{u_wh} {colour_op}_ {colour_u}   direction, and attak by jumping over the')
                 print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{u_wh} {colour_op}_ {colour}{colour_hide}0 {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{u_bl} {colour_op}_ {colour}{colour_hide}0 {colour_u}   enemy in all four directions')
                 print(f'{colour_op}_ {colour}x {colour_op}_ {colour}{u_bl} {colour_op}_ {colour_u}│{colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}{u_wh} {colour_op}_ {colour_u}   they can move only one space when not attaking')
-                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x ')
+                print(f'{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_u}│{colour}{colour_hide}0 {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x  {colour_u}')
                 print()
                 print(f'{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_op}_ {colour_u}│{colour}x {colour_op}_ {colour}{colour_hide}0 {colour_op}_ {colour}x {colour_op}_ {colour_u} - dama/king figures can go diagonally in all')
                 print(f'{colour_op}_ {colour}x {colour_op}_ {colour}{u_bl} {colour_op}_ {colour}{colour_hide}0 {colour_u}│{colour_op}_ {colour}x {colour_op}_ {colour}{u_wh} {colour_op}_ {colour}{colour_hide}0 {colour_u}   directions, and attak by jumping over the')
@@ -601,9 +640,9 @@ def inv_input(inv_count, board, PvP, wh_turn, board_colour, message, tries, shif
 
     Returns
     -------
-    turn : str
+   turn : str
        the coordinates
-    inv_count : int
+   inv_count : int
        current number of invalid tryes
 
     '''
@@ -701,14 +740,14 @@ def usual_attaks(board, board_turn, colour):
 
 def king_turn(board, board_turn, colour, colour_t, border, international):
     '''
-    
+
 
     Parameters
     ----------
     board : list
         list of lists of strings of length 1
         stores the current state of the board
-    board_turn : list
+   board_turn : list
        list of integers
        coordinates from the  "player_turn" function
     colour : set
@@ -799,7 +838,7 @@ def king_turn(board, board_turn, colour, colour_t, border, international):
         king_straight10 = fig10 == 0 and straight10
         king_straight01 = fig01 == 0 and straight01
         king_straight = king_straight1 or king_straight10 or king_straight0 or king_straight01
-        
+
         if international:
             king_attaks1 = straight11 and fig1 == 1 and fig_l[0]
             king_attaks0 = straight00 and fig0 == 1 and fig_l[1]
@@ -810,7 +849,7 @@ def king_turn(board, board_turn, colour, colour_t, border, international):
             king_attaks0 = straight00 and fig0 == 1 and board[board_turn[2] + 1][board_turn[3] + 1] in colour
             king_attaks10 = straight10 and fig10 == 1 and board[board_turn[2] - 1][board_turn[3] + 1] in colour
             king_attaks01 = straight01 and fig01 == 1 and board[board_turn[2] + 1][board_turn[3] - 1] in colour
-            
+
         if king_attaks1:
             out = attak_list[0]
         elif king_attaks0:
@@ -825,7 +864,7 @@ def king_turn(board, board_turn, colour, colour_t, border, international):
 
 def turn_validation(board, board_turn, wh_t, list_attaks, val, border, international):
     '''
-    
+
 
     Parameters
     ----------
@@ -870,7 +909,7 @@ def turn_validation(board, board_turn, wh_t, list_attaks, val, border, internati
 
 def in_list(list_1, board, colour, border):
     '''
-    
+
 
     Parameters
     ----------
@@ -899,7 +938,7 @@ def in_list(list_1, board, colour, border):
 
 def colour_list(board, wh_turn, border, international):
     '''
-    
+
 
     Parameters
     ----------
@@ -933,7 +972,7 @@ def colour_list(board, wh_turn, border, international):
     for y in range(border):
         for x in range(border):
             if board[y][x] in col_usual: # add for m
-                fig_list.append([y, x])       
+                fig_list.append([y, x])
             elif board[y][x] in col_king:
                 king_list.append([y, x])
     for position in fig_list:
@@ -953,7 +992,7 @@ def colour_list(board, wh_turn, border, international):
 
 def ChangeOfTwo(y, x, j):
     '''
-    
+
 
     Parameters
     ----------
@@ -981,7 +1020,7 @@ def ChangeOfTwo(y, x, j):
 
 def acceptable_jump(board_turn, board, colours, border):
     '''
-    
+
 
     Parameters
     ----------
@@ -1021,7 +1060,7 @@ def acceptable_jump(board_turn, board, colours, border):
 
 def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_number, shift, border, international):
     '''
-    
+
 
     Parameters
     ----------
@@ -1064,7 +1103,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
         list of lists consisting of
         a one symbol string and a list with length 2 - 4
         stores the information about the turn
-        
+
 
     '''
     C_l = []
@@ -1142,7 +1181,7 @@ def player_turn(board, wh_turn, Ru, PvP, board_colour, tries, length, turn_numbe
 
 def computer_turn(board, wh_turn, international, board_colour, shift, border):
     '''
-    
+
 
     Parameters
     ----------
@@ -1202,10 +1241,10 @@ def computer_turn(board, wh_turn, international, board_colour, shift, border):
             board[board_turn[2]][board_turn[3]] = 'p'
             print_board(board, board_colour, shift, border)
     return(board, board_turn, turn)
-    
+
 def val_turn(board, board_turn, international, wh_turn, border):
     '''
-    
+
 
     Parameters
     ----------
@@ -1269,7 +1308,7 @@ def val_turn(board, board_turn, international, wh_turn, border):
 
 def read_board(board, wh_turn, border, international):
     '''
-    
+
 
     Parameters
     ----------
@@ -1327,7 +1366,7 @@ def read_board(board, wh_turn, border, international):
                         if l_temp[0] or l_temp[1]:
                             turn_possible = False
                             break
-                
+
             if not turn_possible:
                 break
         if not turn_possible:
@@ -1364,7 +1403,7 @@ def fig_possible(attak_u, attak_k, straight_u, straight_k, border, board, intern
 
 def gen_turn_list(board, wh_turn, border, international, start):
     '''
-    
+
 
     Parameters
     ----------
@@ -1414,14 +1453,33 @@ def gen_turn_list(board, wh_turn, border, international, start):
         return(temp_final, False)
 
 def main():
-    from config_reader import get_settings
     Ru = True
-    config = get_settings()
-    if config.board_colour_ask == 'yes':
+    # ask if user wants to change the board output
+    board_colour_ask= "no"
+    # if board_colour_ask == 'no' what version is default
+    board_colour= 4
+    # ask if user wants to play pvp or test
+    question_test= "no"
+    # if question_test == 'no', what version is default
+    pve= 3
+    # ask if user wants to input a board
+    Board_creator= "no"
+    #american, russian, international
+    game_type= 1
+    # shifts the background colours on the board
+    shift= "no"
+    # print help at the start of the game
+    hint= "no"
+    # how mainy invalid inputs before the board is printed again
+    num_of_tries= 3
+    if board_colour_ask == 'yes':
         board_colour = choice_of_three('What board type do you want to use?')
     else:
-        board_colour = str(config.board_colour)
-    if config.Board_creator == 'yes':
+        board_colour = str(board_colour)
+    if board_colour != "1":
+        from colorama import init
+        init()
+    if Board_creator == 'yes':
         new_board = binary_choice('Do you want to paste your own board?')
     else:
         new_board = False
@@ -1432,7 +1490,7 @@ def main():
         else:
             international = False
     else:
-        if config.game_type == 2:
+        if game_type == 2:
             international = True
             border = 10
             board = [['_', 'w', '_', 'w', '_', 'w', '_', 'w', '_', 'w'],
@@ -1446,11 +1504,11 @@ def main():
                      ['_', 'b', '_', 'b', '_', 'b', '_', 'b', '_', 'b'],
                      ['b', '_', 'b', '_', 'b', '_', 'b', '_', 'b', '_']]
             shift = True
-                
+
         else:
             border = 8
             international = False
-            if config.shift == 'no':
+            if shift == 'no':
                 board = [['w', '_', 'w', '_', 'w', '_', 'w', '_'],
                          ['_', 'w', '_', 'w', '_', 'w', '_', 'w'],
                          ['w', '_', 'w', '_', 'w', '_', 'w', '_'],
@@ -1471,19 +1529,17 @@ def main():
                          ['b', '_', 'b', '_', 'b', '_', 'b', '_']]
                 shift = True
         White_turn = True
-    if config.hint == 'yes':
+    if hint == 'yes':
         ch_help(board_colour)
-    if config.question_test == 'yes':
+    if question_test == 'yes':
         pve = choice_of_four('What combination do you want to play?')
     else:
-        pve = config.pve
+        pve = pve
     if pve == 0 or pve == 1:
         PvP = True
     elif pve == 2 or pve == 3:
         PvP = False
-    if pve != 0:
-        from random import randint
-    tries = config.num_of_tries
+    tries = num_of_tries
     print_board(board, board_colour, shift, border)
     turn_num = 0
     turns = []
