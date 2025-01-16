@@ -1,5 +1,4 @@
-from platform import system
-from platform import release
+from platform import release, system
 from random import randint
 def print_board(board, board_colour, shift, border):
     '''
