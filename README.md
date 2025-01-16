@@ -1,1 +1,1 @@
-checkers game
+A program for playing international/russian checkers
