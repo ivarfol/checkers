@@ -1,5 +1,6 @@
 from platform import release, system
 from random import randint
+import os
 def print_board(board, board_colour, shift, border):
     '''
     print_board
@@ -1462,24 +1463,56 @@ def main():
     # ask if user wants to play pvp or test
     question_test= "no"
     # if question_test == 'no', what version is default
-    pve= 1
+    pve= 2
     # ask if user wants to input a board
     Board_creator= "no"
-    #american, russian, international
-    game_type= 1
+    #russian, international
+    game_type= 2
     # shifts the background colours on the board
     shift= "no"
     # print help at the start of the game
     hint= "no"
     # how mainy invalid inputs before the board is printed again
     num_of_tries= 3
+    if os.path.isfile(os.path.join(os.path.dirname(os.path.realpath(__file__)), "config.cfg")):
+        cwd = os.getcwd()
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        with open("config.cfg") as f:
+            for line in f:
+                line = line.strip().split("#")[0].split(" ")
+                if len(line) == 2 and line[0] in ("board_color", "question_test", "pve", "Board_creator", "game_type", "shift", "hint", "num_of_tries"):
+                    if line[0] == "board_color":
+                        if line[1] == "ask":
+                            board_color_ask = "yes"
+                        elif line[1] in ("1", "2", "3", "4", "5"):
+                            board_color = line[1]
+                    elif line[0] == "pve":
+                        if line[1] == "ask":
+                            question_test = "yes"
+                        elif line[1] in ("0", "1", "2", "3"):
+                            pve = int(line[1])
+                    elif line[0] == "Board_creator" and line[1] in ("yes", "no"):
+                        Board_creator = line[1]
+                    elif line[0] == "game_type" and line[1] in ("1", "2"):
+                        game_type = int(line[1])
+                    elif line[0] == "shift" and line[1] in ("yes", "no"):
+                        shift = line[1]
+                    elif line[0] == "hint" and line[1] in ("yes", "no"):
+                        hint = line[1]
+                    elif line[0] == "num_of_tries" and line[1].isdigit():
+                        num_of_tries = int(line[1])
+        os.chdir(cwd)
+
     if board_colour_ask == 'yes':
         board_colour = choice_of_three('What board type do you want to use?')
     else:
         board_colour = str(board_colour)
     if board_colour != "1" and system() == "Windows" and release() == "10":
-        from colorama import init
-        init()
+        try:
+            from colorama import init
+            init()
+        except:
+            print("Colorama was not iniciated, this may cause incorrect output!")
     if Board_creator == 'yes':
         new_board = binary_choice('Do you want to paste your own board?')
     else:
@@ -1534,8 +1567,6 @@ def main():
         ch_help(board_colour)
     if question_test == 'yes':
         pve = choice_of_four('What combination do you want to play?')
-    else:
-        pve = pve
     if pve == 0 or pve == 1:
         PvP = True
     elif pve == 2 or pve == 3:
