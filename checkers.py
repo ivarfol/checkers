@@ -287,6 +287,7 @@ def ch_help(board_colour):
             print('redo - to go one turn turn forward if ')
             print('you did not make any new turns')
             print('surrender - to surrender to the enemy and end the game')
+            print('tie - to ask for a tie')
         elif choice == '2':
             print('Figures:')
             print(f'usual white - {colour}{u_wh}{colour_u}')
